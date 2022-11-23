@@ -16,4 +16,4 @@ export const chunkArray = <T>(items: Array<T>, chunkSize: number): Array<Array<T
 type ValueOrArray<T> = T | Array<ValueOrArray<T>>;
 type RecursiveArray<T> = Array<ValueOrArray<T>>;
 export const flattenDeep = <T>(array: RecursiveArray<T>): Array<T> =>
-  array.flatMap((subArray, index) => (Array.isArray(subArray) ? flattenDeep(subArray) : subArray));
+  array.flatMap((subArray) => (Array.isArray(subArray) ? flattenDeep(subArray) : subArray));
