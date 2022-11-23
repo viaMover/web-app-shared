@@ -1,16 +1,18 @@
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
+import { getNetworkByChainId } from 'web-app-shared/references/references';
+import { MoverAPIError } from 'web-app-shared/services/api/mover/MoverAPIError';
+import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
+import {
+  MoverAPIErrorResponse,
+  MoverAPISuccessfulResponse
+} from 'web-app-shared/services/api/mover/types';
+import { EECode, ExpectedError } from 'web-app-shared/services/ExpectedError';
+import { MoverError } from 'web-app-shared/services/MoverError';
+import { isRejectedRequestError } from 'web-app-shared/services/onchain/ProviderRPCError';
 import Web3 from 'web3';
-
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { getEndpoint } from '@/references/endpoints';
-import { getNetworkByChainId } from '@/references/references';
-import { MoverAPIError } from '@/services/api/mover/MoverAPIError';
-import { MoverAPIService } from '@/services/api/mover/MoverAPIService';
-import { MoverAPIErrorResponse, MoverAPISuccessfulResponse } from '@/services/api/mover/types';
-import { EECode, ExpectedError } from '@/services/ExpectedError';
-import { MoverError } from '@/services/MoverError';
-import { isRejectedRequestError } from '@/services/onchain/ProviderRPCError';
 
 import {
   GetIncomingTopUpEventAPIResponse,

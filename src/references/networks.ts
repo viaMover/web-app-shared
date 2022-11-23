@@ -1,6 +1,6 @@
-import { getAPIKey } from '@/references/keys';
-import { Network } from '@/references/network';
-import { NetworkInfoMap } from '@/references/types';
+import { getAPIKey } from 'web-app-shared/references/keys';
+import { Network } from 'web-app-shared/references/network';
+import { NetworkInfoMap } from 'web-app-shared/references/types';
 
 export const AvailableNetworks: Array<Network> = [
   Network.ethereum,
@@ -19,7 +19,7 @@ export const networks: NetworkInfoMap = {
     network: Network.ethereum,
     explorer: 'https://etherscan.io',
     subsidizedUrl: 'https://api.viamover.com/api/v1',
-    iconURL: require('@/assets/images/networks/ethereum.png'),
+    iconURL: require('web-app-shared/assets/images/networks/ethereum.png'),
     baseAsset: {
       address: 'eth',
       decimals: 18,
@@ -42,7 +42,7 @@ export const networks: NetworkInfoMap = {
     network: Network.polygon,
     explorer: 'https://polygonscan.com',
     subsidizedUrl: undefined,
-    iconURL: require('@/assets/images/networks/polygon.png'),
+    iconURL: require('web-app-shared/assets/images/networks/polygon.png'),
     baseAsset: {
       address: 'matic',
       decimals: 18,
@@ -60,7 +60,7 @@ export const networks: NetworkInfoMap = {
     network: Network.binance,
     explorer: 'https://bscscan.com',
     subsidizedUrl: undefined,
-    iconURL: require('@/assets/images/networks/binance.png'),
+    iconURL: require('web-app-shared/assets/images/networks/binance.png'),
     baseAsset: {
       address: 'bsc',
       decimals: 18,
@@ -93,7 +93,7 @@ export const networks: NetworkInfoMap = {
     network: Network.avalanche,
     explorer: 'https://snowtrace.io',
     subsidizedUrl: undefined,
-    iconURL: require('@/assets/images/networks/avalanche.png'),
+    iconURL: require('web-app-shared/assets/images/networks/avalanche.png'),
     baseAsset: {
       address: 'avax',
       decimals: 18,
@@ -112,7 +112,7 @@ export const networks: NetworkInfoMap = {
     network: Network.arbitrum,
     explorer: 'https://arbiscan.io',
     subsidizedUrl: undefined,
-    iconURL: require('@/assets/images/networks/arbitrum.png'),
+    iconURL: require('web-app-shared/assets/images/networks/arbitrum.png'),
     baseAsset: {
       address: 'areth',
       decimals: 18,
@@ -131,7 +131,7 @@ export const networks: NetworkInfoMap = {
     network: Network.fantom,
     explorer: 'https://ftmscan.com',
     subsidizedUrl: undefined,
-    iconURL: require('@/assets/images/networks/fantom.png'),
+    iconURL: require('web-app-shared/assets/images/networks/fantom.png'),
     baseAsset: {
       address: 'ftm',
       decimals: 18,
@@ -149,7 +149,7 @@ export const networks: NetworkInfoMap = {
     network: Network.optimism,
     explorer: 'https://optimistic.etherscan.io',
     subsidizedUrl: undefined,
-    iconURL: require('@/assets/images/networks/optimism.png'),
+    iconURL: require('web-app-shared/assets/images/networks/optimism.png'),
     baseAsset: {
       address: 'oeth',
       decimals: 18,

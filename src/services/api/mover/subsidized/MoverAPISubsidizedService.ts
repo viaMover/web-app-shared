@@ -1,12 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
-
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { Network } from '@/references/network';
-import { getNetwork } from '@/references/references';
-import { MoverAPIError } from '@/services/api/mover/MoverAPIError';
-import { MoverAPIService } from '@/services/api/mover/MoverAPIService';
-import { MoverAPISubsidizedRequestError } from '@/services/api/mover/subsidized/MoverAPISubsidizedRequestError';
-import { NetworkFeatureNotSupportedError } from '@/services/NetworkFeatureNotSupportedError';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { Network } from 'web-app-shared/references/network';
+import { getNetwork } from 'web-app-shared/references/references';
+import { MoverAPIError } from 'web-app-shared/services/api/mover/MoverAPIError';
+import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
+import { MoverAPISubsidizedRequestError } from 'web-app-shared/services/api/mover/subsidized/MoverAPISubsidizedRequestError';
+import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
 
 import {
   CheckTransactionStatusReturn,

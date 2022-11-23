@@ -1,6 +1,6 @@
-import { Network } from '@/references/network';
-import { Token } from '@/references/tokens';
-import { Rates } from '@/services/api/mover/rates/types';
+import { Network } from 'web-app-shared/references/network';
+import { Token } from 'web-app-shared/references/tokens';
+import { Rates } from 'web-app-shared/services/api/mover/rates/types';
 
 export enum Status {
   Pending = 'pending',

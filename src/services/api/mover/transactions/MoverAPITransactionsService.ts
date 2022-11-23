@@ -1,11 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 import { Md5 } from 'ts-md5';
-
-import { getEndpoint } from '@/references/endpoints';
-import { getNetworkByChainId } from '@/references/references';
-import { MoverAPIService } from '@/services/api/mover/MoverAPIService';
-import { MoverAPISuccessfulResponse } from '@/services/api/mover/types';
-import { ContentName, SameContentError } from '@/services/SameContentError';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
+import { getNetworkByChainId } from 'web-app-shared/references/references';
+import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
+import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
+import { ContentName, SameContentError } from 'web-app-shared/services/SameContentError';
 
 import { ApiTransactionsResponse, GetTransactionListReturnItem, TransactionType } from './types';
 

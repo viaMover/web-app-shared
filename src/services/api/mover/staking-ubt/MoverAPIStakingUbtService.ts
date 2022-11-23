@@ -1,11 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
-
-import { dateFromExplicitPair } from '@/helpers/time';
-import { getEndpoint } from '@/references/endpoints';
-import { MoverAPIService } from '@/services/api/mover/MoverAPIService';
-import { StakingUbtInfo, StakingUbtReceipt } from '@/services/api/mover/staking-ubt/types';
-import { MoverAPISuccessfulResponse } from '@/services/api/mover/types';
+import { dateFromExplicitPair } from 'web-app-shared/helpers/time';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
+import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
+import {
+  StakingUbtInfo,
+  StakingUbtReceipt
+} from 'web-app-shared/services/api/mover/staking-ubt/types';
+import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
 
 export class MoverAPIStakingUbtService extends MoverAPIService {
   protected baseURL: string;

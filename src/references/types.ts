@@ -1,6 +1,6 @@
-import { BridgeType } from '@/references/bridge';
-import { Network } from '@/references/network';
-import { Token } from '@/references/tokens';
+import { BridgeType } from 'web-app-shared/references/bridge';
+import { Network } from 'web-app-shared/references/network';
+import { Token } from 'web-app-shared/references/tokens';
 
 export type AddressMapKey =
   | 'MOVE_ADDRESS'

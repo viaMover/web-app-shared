@@ -1,10 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
-
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { getEndpoint } from '@/references/endpoints';
-import { Network } from '@/references/network';
-import { getNetwork } from '@/references/references';
-import { GetApprovalAPIResponse, GetApprovalReturn } from '@/services/api/mover/approval/types';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
+import { Network } from 'web-app-shared/references/network';
+import { getNetwork } from 'web-app-shared/references/references';
+import {
+  GetApprovalAPIResponse,
+  GetApprovalReturn
+} from 'web-app-shared/services/api/mover/approval/types';
 
 import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';

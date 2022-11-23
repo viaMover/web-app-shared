@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
-
-import { MoverAPICardService } from '@/services/api/mover/card/MoverAPICardService';
+import { MoverAPICardService } from 'web-app-shared/services/api/mover/card/MoverAPICardService';
 import {
   CardStatus,
   ContactDetails,
@@ -8,7 +7,7 @@ import {
   GetInfoResponseBase,
   GetInfoResponseWithHistory,
   PersonalInfo
-} from '@/services/api/mover/card/types';
+} from 'web-app-shared/services/api/mover/card/types';
 
 export class MoverAPICardServiceMock extends MoverAPICardService {
   constructor() {

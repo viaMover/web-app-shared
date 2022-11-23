@@ -1,7 +1,7 @@
-import { sameAddress } from '@/helpers/addresses';
-import { Network } from '@/references/network';
-import { NFT, NFTKind } from '@/references/nfts';
-import { PermitData, TokenWithBalance } from '@/references/tokens';
+import { sameAddress } from 'web-app-shared/helpers/addresses';
+import { Network } from 'web-app-shared/references/network';
+import { NFT, NFTKind } from 'web-app-shared/references/nfts';
+import { PermitData, TokenWithBalance } from 'web-app-shared/references/tokens';
 
 export type AssetData = {
   address: string;

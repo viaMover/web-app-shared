@@ -1,10 +1,9 @@
 import axios, { AxiosInstance } from 'axios';
-
-import { getEndpoint } from '@/references/endpoints';
-import { Network } from '@/references/network';
-import { MoverError } from '@/services/MoverError';
-import { Service } from '@/services/Service';
-import { getParamsSerializer } from '@/services/utils/params';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
+import { Network } from 'web-app-shared/references/network';
+import { MoverError } from 'web-app-shared/services/MoverError';
+import { Service } from 'web-app-shared/services/Service';
+import { getParamsSerializer } from 'web-app-shared/services/utils/params';
 
 import { AcrossFeeResponse } from './types';
 

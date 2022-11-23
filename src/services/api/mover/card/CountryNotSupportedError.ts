@@ -1,5 +1,5 @@
-import { MoverAPIError } from '@/services/api/mover/MoverAPIError';
-import { MoverError } from '@/services/MoverError';
+import { MoverAPIError } from 'web-app-shared/services/api/mover/MoverAPIError';
+import { MoverError } from 'web-app-shared/services/MoverError';
 
 export class CountryNotSupportedError extends MoverError {
   protected readonly countryCode: string;

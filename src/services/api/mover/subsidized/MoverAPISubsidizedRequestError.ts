@@ -1,4 +1,4 @@
-import { MoverAPIError } from '@/services/api/mover/MoverAPIError';
+import { MoverAPIError } from 'web-app-shared/services/api/mover/MoverAPIError';
 
 export class MoverAPISubsidizedRequestError extends MoverAPIError {
   // TODO: some additional data?

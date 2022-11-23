@@ -1,15 +1,14 @@
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
-
-import { dateFromExplicitPair } from '@/helpers/time';
-import { getEndpoint } from '@/references/endpoints';
-import { Network } from '@/references/network';
-import { getNetwork } from '@/references/references';
-import { MoverAPIError } from '@/services/api/mover/MoverAPIError';
-import { MoverAPIService } from '@/services/api/mover/MoverAPIService';
-import { MoverAPISuccessfulResponse } from '@/services/api/mover/types';
-import { EECode, ExpectedError } from '@/services/ExpectedError';
-import { MoverError } from '@/services/MoverError';
+import { dateFromExplicitPair } from 'web-app-shared/helpers/time';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
+import { Network } from 'web-app-shared/references/network';
+import { getNetwork } from 'web-app-shared/references/references';
+import { MoverAPIError } from 'web-app-shared/services/api/mover/MoverAPIError';
+import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
+import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
+import { EECode, ExpectedError } from 'web-app-shared/services/ExpectedError';
+import { MoverError } from 'web-app-shared/services/MoverError';
 
 import {
   DepositExecution,

@@ -1,8 +1,7 @@
+import { Network } from 'web-app-shared/references/network';
+import { PreparedAction } from 'web-app-shared/services/onchain/mover/subsidized/types';
+import { OnChainService } from 'web-app-shared/services/onchain/OnChainService';
 import Web3 from 'web3';
-
-import { Network } from '@/references/network';
-import { PreparedAction } from '@/services/onchain/mover/subsidized/types';
-import { OnChainService } from '@/services/onchain/OnChainService';
 
 export class SubsidizedTransactionsOnChainService extends OnChainService {
   constructor(

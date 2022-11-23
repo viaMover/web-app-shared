@@ -1,8 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
-
-import { dateFromExplicitPair } from '@/helpers/time';
-import { getEndpoint } from '@/references/endpoints';
+import { dateFromExplicitPair } from 'web-app-shared/helpers/time';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
 
 import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';

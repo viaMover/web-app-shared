@@ -1,9 +1,4 @@
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-import { ContractSendMethod } from 'web3-eth-contract';
-import { AbiItem } from 'web3-utils';
-
-import { sameAddress } from '@/helpers/addresses';
+import { sameAddress } from 'web-app-shared/helpers/addresses';
 import {
   convertToString,
   divide,
@@ -12,26 +7,30 @@ import {
   multiply,
   sub,
   toWei
-} from '@/helpers/bigmath';
-import { InMemoryCache } from '@/helpers/cache';
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { YEARN_SIMPLE_VAULT_ABI } from '@/references/abi';
-import { Network } from '@/references/network';
+} from 'web-app-shared/helpers/bigmath';
+import { InMemoryCache } from 'web-app-shared/helpers/cache';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { YEARN_SIMPLE_VAULT_ABI } from 'web-app-shared/references/abi';
+import { Network } from 'web-app-shared/references/network';
 import {
   getSimpleYearnVaultTokenByAddress,
   YearnVaultData
-} from '@/references/specialTokens/yearnVaultsData';
-import { SmallToken, SmallTokenInfo } from '@/references/tokens';
-import { currentBalance } from '@/services/onchain/erc20/balance';
-import { OnChainServiceError } from '@/services/onchain/OnChainServiceError';
+} from 'web-app-shared/references/specialTokens/yearnVaultsData';
+import { SmallToken, SmallTokenInfo } from 'web-app-shared/references/tokens';
+import { currentBalance } from 'web-app-shared/services/onchain/erc20/balance';
+import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State
-} from '@/services/onchain/transaction-states';
-import { EstimateResponse, TransactionsParams } from '@/services/onchain/types';
-import { WrappedToken } from '@/services/onchain/wrapped-tokens/WrappedToken';
-import { YearnVaultContract } from '@/services/onchain/wrapped-tokens/yearn/types';
+} from 'web-app-shared/services/onchain/transaction-states';
+import { EstimateResponse, TransactionsParams } from 'web-app-shared/services/onchain/types';
+import { WrappedToken } from 'web-app-shared/services/onchain/wrapped-tokens/WrappedToken';
+import { YearnVaultContract } from 'web-app-shared/services/onchain/wrapped-tokens/yearn/types';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractSendMethod } from 'web3-eth-contract';
+import { AbiItem } from 'web3-utils';
 
 export class WrappedTokenYearn extends WrappedToken {
   private readonly vault: YearnVaultData;

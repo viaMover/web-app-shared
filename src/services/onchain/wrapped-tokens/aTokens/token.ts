@@ -1,26 +1,28 @@
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
-
-import { sameAddress } from '@/helpers/addresses';
-import { floorDivide, multiply, sub, toWei } from '@/helpers/bigmath';
-import { asyncSleep } from '@/helpers/sleep';
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { AAVE_LANDING_POOL_ABI } from '@/references/abi';
-import { Network } from '@/references/network';
-import { getNetworkAddress } from '@/references/references';
-import { ATokenData, getATokenByAddress } from '@/references/specialTokens/aTokensData';
-import { SmallToken, SmallTokenInfo } from '@/references/tokens';
-import { currentBalance } from '@/services/onchain/erc20/balance';
-import { OnChainServiceError } from '@/services/onchain/OnChainServiceError';
+import { sameAddress } from 'web-app-shared/helpers/addresses';
+import { floorDivide, multiply, sub, toWei } from 'web-app-shared/helpers/bigmath';
+import { asyncSleep } from 'web-app-shared/helpers/sleep';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { AAVE_LANDING_POOL_ABI } from 'web-app-shared/references/abi';
+import { Network } from 'web-app-shared/references/network';
+import { getNetworkAddress } from 'web-app-shared/references/references';
+import {
+  ATokenData,
+  getATokenByAddress
+} from 'web-app-shared/references/specialTokens/aTokensData';
+import { SmallToken, SmallTokenInfo } from 'web-app-shared/references/tokens';
+import { currentBalance } from 'web-app-shared/services/onchain/erc20/balance';
+import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State
-} from '@/services/onchain/transaction-states';
-import { EstimateResponse, TransactionsParams } from '@/services/onchain/types';
-import { AAVEPoolContract } from '@/services/onchain/wrapped-tokens/aTokens/types';
-import { WrappedToken } from '@/services/onchain/wrapped-tokens/WrappedToken';
+} from 'web-app-shared/services/onchain/transaction-states';
+import { EstimateResponse, TransactionsParams } from 'web-app-shared/services/onchain/types';
+import { AAVEPoolContract } from 'web-app-shared/services/onchain/wrapped-tokens/aTokens/types';
+import { WrappedToken } from 'web-app-shared/services/onchain/wrapped-tokens/WrappedToken';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { AbiItem } from 'web3-utils';
 
 export class WrappedTokenAToken extends WrappedToken {
   private readonly aToken: ATokenData;

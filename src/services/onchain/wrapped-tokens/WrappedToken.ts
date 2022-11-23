@@ -1,13 +1,12 @@
 /**
  * Special token that should be handled specifically to be used by the DEX
  */
+import { Network } from 'web-app-shared/references/network';
+import { SmallToken, SmallTokenInfo } from 'web-app-shared/references/tokens';
+import { PromiEventWrapper } from 'web-app-shared/services/onchain/PromiEventWrapper';
+import { ITransactionStateEventBus } from 'web-app-shared/services/onchain/transaction-states';
+import { EstimateResponse } from 'web-app-shared/services/onchain/types';
 import Web3 from 'web3';
-
-import { Network } from '@/references/network';
-import { SmallToken, SmallTokenInfo } from '@/references/tokens';
-import { PromiEventWrapper } from '@/services/onchain/PromiEventWrapper';
-import { ITransactionStateEventBus } from '@/services/onchain/transaction-states';
-import { EstimateResponse } from '@/services/onchain/types';
 
 export abstract class WrappedToken extends PromiEventWrapper {
   readonly network: Network;

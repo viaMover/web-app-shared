@@ -1,11 +1,9 @@
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
-import Web3 from 'web3';
-
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { getEndpoint } from '@/references/endpoints';
-import { MoverAPIError } from '@/services/api/mover/MoverAPIError';
-import { MoverAPIService } from '@/services/api/mover/MoverAPIService';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
+import { MoverAPIError } from 'web-app-shared/services/api/mover/MoverAPIError';
+import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
 import {
   AddApprovedWalletReturn,
   ApprovedWalletsList,
@@ -17,11 +15,12 @@ import {
   ResolveTagResponse,
   SetAvatarResponse,
   TagsAmountResponse
-} from '@/services/api/mover/tag/types';
-import { MoverAPISuccessfulResponse } from '@/services/api/mover/types';
-import { EECode, ExpectedError } from '@/services/ExpectedError';
-import { MoverError } from '@/services/MoverError';
-import { isRejectedRequestError } from '@/services/onchain/ProviderRPCError';
+} from 'web-app-shared/services/api/mover/tag/types';
+import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
+import { EECode, ExpectedError } from 'web-app-shared/services/ExpectedError';
+import { MoverError } from 'web-app-shared/services/MoverError';
+import { isRejectedRequestError } from 'web-app-shared/services/onchain/ProviderRPCError';
+import Web3 from 'web3';
 
 import {
   LookupTagResponse,

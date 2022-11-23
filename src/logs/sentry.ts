@@ -2,8 +2,7 @@ import {
   addBreadcrumb as originalAddSentryBreadcrumb,
   captureException as originalCaptureException
 } from '@sentry/core';
-
-import { getFeatureFlag } from '@/references/feature-flags';
+import { getFeatureFlag } from 'web-app-shared/references/feature-flags';
 
 let addSentryBreadcrumbFunc = originalAddSentryBreadcrumb;
 if (getFeatureFlag('IS_CONSOLE_ENABLED')) {

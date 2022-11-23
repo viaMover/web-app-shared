@@ -1,16 +1,15 @@
 import axios, { AxiosInstance } from 'axios';
-
-import { sameAddress } from '@/helpers/addresses';
-import { addSentryBreadcrumb, captureSentryException } from '@/logs/sentry';
+import { sameAddress } from 'web-app-shared/helpers/addresses';
+import { addSentryBreadcrumb, captureSentryException } from 'web-app-shared/logs/sentry';
 import {
   getMoveAssetData,
   getMoveWethLPAssetData,
   getUBTAssetData,
   getUSDCAssetData
-} from '@/references/assets';
-import { getEndpoint } from '@/references/endpoints';
-import { Network } from '@/references/network';
-import { PermitData, Token } from '@/references/tokens';
+} from 'web-app-shared/references/assets';
+import { getEndpoint } from 'web-app-shared/references/endpoints';
+import { Network } from 'web-app-shared/references/network';
+import { PermitData, Token } from 'web-app-shared/references/tokens';
 import {
   AssetData,
   CommonPricesReturn,
@@ -27,9 +26,9 @@ import {
   PricesReturn,
   SelectedHistoryPricesReturn,
   WalletResponse
-} from '@/services/api/mover/assets/types';
-import { MoverAPIService } from '@/services/api/mover/MoverAPIService';
-import { MoverAPISuccessfulResponse } from '@/services/api/mover/types';
+} from 'web-app-shared/services/api/mover/assets/types';
+import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
+import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
 
 export class MoverAssetsService extends MoverAPIService {
   protected readonly client: AxiosInstance;

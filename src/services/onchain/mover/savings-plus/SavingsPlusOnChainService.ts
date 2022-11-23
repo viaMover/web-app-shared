@@ -1,17 +1,14 @@
 import dayjs from 'dayjs';
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-
-import { sameAddress } from '@/helpers/addresses';
-import { clampLeft, getInteger, multiply, sub, toWei } from '@/helpers/bigmath';
-import { asyncSleep } from '@/helpers/sleep';
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { getCentralTransferProxyAbi } from '@/references/abi';
-import { getUSDCAssetData } from '@/references/assets';
-import { gasDefaults } from '@/references/gasDefaults';
-import { Network } from '@/references/network';
-import { getNetwork, getNetworkAddress } from '@/references/references';
-import { SmallTokenInfo, Token } from '@/references/tokens';
+import { sameAddress } from 'web-app-shared/helpers/addresses';
+import { clampLeft, getInteger, multiply, sub, toWei } from 'web-app-shared/helpers/bigmath';
+import { asyncSleep } from 'web-app-shared/helpers/sleep';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { getCentralTransferProxyAbi } from 'web-app-shared/references/abi';
+import { getUSDCAssetData } from 'web-app-shared/references/assets';
+import { gasDefaults } from 'web-app-shared/references/gasDefaults';
+import { Network } from 'web-app-shared/references/network';
+import { getNetwork, getNetworkAddress } from 'web-app-shared/references/references';
+import { SmallTokenInfo, Token } from 'web-app-shared/references/tokens';
 import {
   DepositExecution,
   DepositOnlyTransactionData,
@@ -22,26 +19,31 @@ import {
   WithdrawExecution,
   WithdrawOnlyTransactionData,
   WithdrawTransactionData
-} from '@/services/api/mover/savings-plus/types';
-import { TransactionStatus } from '@/services/api/mover/subsidized/types';
-import { TransactionDirection, TransactionType } from '@/services/api/mover/transactions/types';
-import { TransferData } from '@/services/api/swap/types';
-import { EECode } from '@/services/ExpectedError';
-import { MoverError } from '@/services/MoverError';
-import { NetworkFeatureNotSupportedError } from '@/services/NetworkFeatureNotSupportedError';
-import { MoverOnChainService } from '@/services/onchain/mover/MoverOnChainService';
-import { InvalidNetworkForOperationError } from '@/services/onchain/mover/savings-plus/InvalidNetworkForOperationError';
-import { PreparedAction } from '@/services/onchain/mover/subsidized/types';
-import { TransferProxyContract } from '@/services/onchain/mover/types';
-import { OnChainServiceError } from '@/services/onchain/OnChainServiceError';
+} from 'web-app-shared/services/api/mover/savings-plus/types';
+import { TransactionStatus } from 'web-app-shared/services/api/mover/subsidized/types';
+import {
+  TransactionDirection,
+  TransactionType
+} from 'web-app-shared/services/api/mover/transactions/types';
+import { TransferData } from 'web-app-shared/services/api/swap/types';
+import { EECode } from 'web-app-shared/services/ExpectedError';
+import { MoverError } from 'web-app-shared/services/MoverError';
+import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
+import { MoverOnChainService } from 'web-app-shared/services/onchain/mover/MoverOnChainService';
+import { InvalidNetworkForOperationError } from 'web-app-shared/services/onchain/mover/savings-plus/InvalidNetworkForOperationError';
+import { PreparedAction } from 'web-app-shared/services/onchain/mover/subsidized/types';
+import { TransferProxyContract } from 'web-app-shared/services/onchain/mover/types';
+import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State,
   TransactionScenario,
   TransactionStateItem
-} from '@/services/onchain/transaction-states';
-import { CompoundEstimateResponse } from '@/services/onchain/types';
+} from 'web-app-shared/services/onchain/transaction-states';
+import { CompoundEstimateResponse } from 'web-app-shared/services/onchain/types';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
 
 export class SavingsPlusOnChainService extends MoverOnChainService {
   protected readonly centralTransferProxyContract: TransferProxyContract | undefined;

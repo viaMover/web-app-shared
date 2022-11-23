@@ -1,5 +1,5 @@
-import { Network } from '@/references/network';
-import { Token } from '@/references/tokens';
+import { Network } from 'web-app-shared/references/network';
+import { Token } from 'web-app-shared/references/tokens';
 
 export type GetTagTopUpCodeRequest = {
   tag: string;

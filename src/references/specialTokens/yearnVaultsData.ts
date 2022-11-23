@@ -1,6 +1,6 @@
-import { sameAddress } from '@/helpers/addresses';
-import { Network } from '@/references/network';
-import { SmallTokenInfo } from '@/references/tokens';
+import { sameAddress } from 'web-app-shared/helpers/addresses';
+import { Network } from 'web-app-shared/references/network';
+import { SmallTokenInfo } from 'web-app-shared/references/tokens';
 
 export type YearnVaultData = {
   name: string;

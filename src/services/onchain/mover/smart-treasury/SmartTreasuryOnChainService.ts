@@ -1,30 +1,36 @@
 import dayjs from 'dayjs';
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
-
-import { sameAddress } from '@/helpers/addresses';
-import { toWei } from '@/helpers/bigmath';
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { getCentralTransferProxyAbi, SMART_TREASURY_ABI } from '@/references/abi';
-import { getMoveAssetData, getMoveWethLPAssetData, getUSDCAssetData } from '@/references/assets';
-import { gasDefaults } from '@/references/gasDefaults';
-import { Network } from '@/references/network';
-import { getNetworkAddress } from '@/references/references';
-import { SmallTokenInfo, Token } from '@/references/tokens';
-import { TransactionDirection, TransactionType } from '@/services/api/mover/transactions/types';
-import { NetworkFeatureNotSupportedError } from '@/services/NetworkFeatureNotSupportedError';
-import { MoverOnChainService } from '@/services/onchain/mover/MoverOnChainService';
-import { TransferProxyContract } from '@/services/onchain/mover/types';
-import { OnChainServiceError } from '@/services/onchain/OnChainServiceError';
+import { sameAddress } from 'web-app-shared/helpers/addresses';
+import { toWei } from 'web-app-shared/helpers/bigmath';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { getCentralTransferProxyAbi, SMART_TREASURY_ABI } from 'web-app-shared/references/abi';
+import {
+  getMoveAssetData,
+  getMoveWethLPAssetData,
+  getUSDCAssetData
+} from 'web-app-shared/references/assets';
+import { gasDefaults } from 'web-app-shared/references/gasDefaults';
+import { Network } from 'web-app-shared/references/network';
+import { getNetworkAddress } from 'web-app-shared/references/references';
+import { SmallTokenInfo, Token } from 'web-app-shared/references/tokens';
+import {
+  TransactionDirection,
+  TransactionType
+} from 'web-app-shared/services/api/mover/transactions/types';
+import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
+import { MoverOnChainService } from 'web-app-shared/services/onchain/mover/MoverOnChainService';
+import { TransferProxyContract } from 'web-app-shared/services/onchain/mover/types';
+import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State,
   TransactionScenario,
   TransactionStateItem
-} from '@/services/onchain/transaction-states';
-import { CompoundEstimateResponse } from '@/services/onchain/types';
+} from 'web-app-shared/services/onchain/transaction-states';
+import { CompoundEstimateResponse } from 'web-app-shared/services/onchain/types';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { AbiItem } from 'web3-utils';
 
 import { SmartTreasuryContract } from './types';
 

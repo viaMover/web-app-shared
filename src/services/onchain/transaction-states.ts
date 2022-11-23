@@ -1,6 +1,6 @@
-import { Network } from '@/references/network';
-import { SmallTokenInfo } from '@/references/tokens';
-import { TransactionType } from '@/services/api/mover/transactions/types';
+import { Network } from 'web-app-shared/references/network';
+import { SmallTokenInfo } from 'web-app-shared/references/tokens';
+import { TransactionType } from 'web-app-shared/services/api/mover/transactions/types';
 
 export enum State {
   Pending = 'pending',

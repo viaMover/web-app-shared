@@ -1,4 +1,4 @@
-import { TransactionScenario } from '@/services/onchain/transaction-states';
+import { TransactionScenario } from 'web-app-shared/services/onchain/transaction-states';
 
 export type SetScenarioDataByUniqIdPayload = {
   transactionUID: string;

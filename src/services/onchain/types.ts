@@ -1,7 +1,6 @@
+import { SmallTokenInfo } from 'web-app-shared/references/tokens';
+import { TransactionInMemPoolTemplate } from 'web-app-shared/services/api/mover/transactions/types';
 import { Contract, ContractSendMethod } from 'web3-eth-contract';
-
-import { SmallTokenInfo } from '@/references/tokens';
-import { TransactionInMemPoolTemplate } from '@/services/api/mover/transactions/types';
 
 export type EstimateResponse = {
   error: boolean;

@@ -1,4 +1,4 @@
-import { MoverError } from '@/services/MoverError';
+import { MoverError } from 'web-app-shared/services/MoverError';
 
 export class MoverAPIError extends MoverError {
   constructor(

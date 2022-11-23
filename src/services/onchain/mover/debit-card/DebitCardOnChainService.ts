@@ -1,66 +1,85 @@
 import { BigNumber } from 'bignumber.js';
 import dayjs from 'dayjs';
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-
-import { sameAddress } from '@/helpers/addresses';
-import { fromWei, getInteger, greaterThan, isEqual, multiply, sub, toWei } from '@/helpers/bigmath';
-import { asyncSleep } from '@/helpers/sleep';
-import { addSentryBreadcrumb } from '@/logs/sentry';
-import { getCentralTransferProxyAbi } from '@/references/abi';
-import { getTopUpProxyAbi } from '@/references/abi/topup-proxy';
-import { getUSDCAssetData } from '@/references/assets';
-import { BridgeType, mapBrideTypeToContractsConstant } from '@/references/bridge';
-import { gasDefaults } from '@/references/gasDefaults';
-import { Network } from '@/references/network';
+import { sameAddress } from 'web-app-shared/helpers/addresses';
+import {
+  fromWei,
+  getInteger,
+  greaterThan,
+  isEqual,
+  multiply,
+  sub,
+  toWei
+} from 'web-app-shared/helpers/bigmath';
+import { asyncSleep } from 'web-app-shared/helpers/sleep';
+import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+import { getCentralTransferProxyAbi } from 'web-app-shared/references/abi';
+import { getTopUpProxyAbi } from 'web-app-shared/references/abi/topup-proxy';
+import { getUSDCAssetData } from 'web-app-shared/references/assets';
+import { BridgeType, mapBrideTypeToContractsConstant } from 'web-app-shared/references/bridge';
+import { gasDefaults } from 'web-app-shared/references/gasDefaults';
+import { Network } from 'web-app-shared/references/network';
 import {
   getNetwork,
   getNetworkAddress,
   getNetworkConstant,
   getSlippage,
   isBaseAssetByNetwork
-} from '@/references/references';
-import { addresses as aTokenAddresses } from '@/references/specialTokens/aTokensData';
-import { addresses as idleTokenAddresses } from '@/references/specialTokens/idleTokensData';
-import { addresses as yearnSimpleVaultAddresses } from '@/references/specialTokens/yearnVaultsData';
-import { PermitData, SmallToken, SmallTokenInfo, Token, TokenWithPrice } from '@/references/tokens';
-import { AcrossAPIService } from '@/services/api/mover/across/AcrossAPIService';
-import { MoverAPIApprovalService } from '@/services/api/mover/approval/MoverAPIApprovalService';
-import { GetApprovalReturn } from '@/services/api/mover/approval/types';
-import { MoverAssetsService } from '@/services/api/mover/assets/MoverAPIAssetsService';
-import { TransactionDirection, TransactionType } from '@/services/api/mover/transactions/types';
-import { SwapAPIService } from '@/services/api/swap/SwapAPIService';
-import { TransferData } from '@/services/api/swap/types';
-import { EECode } from '@/services/ExpectedError';
-import { MoverError } from '@/services/MoverError';
-import { NetworkFeatureNotSupportedError } from '@/services/NetworkFeatureNotSupportedError';
-import { BridgeDataResponse } from '@/services/onchain/mover/debit-card/types';
-import { MoverOnChainService } from '@/services/onchain/mover/MoverOnChainService';
-import { ProveOnChainService } from '@/services/onchain/mover/prove-txn/ProveOnChainService';
-import { TopUpProxyContract, TransferProxyContract } from '@/services/onchain/mover/types';
-import { OnChainServiceError } from '@/services/onchain/OnChainServiceError';
-import { PermitOnChainService } from '@/services/onchain/permit/PermitOnChainService';
+} from 'web-app-shared/references/references';
+import { addresses as aTokenAddresses } from 'web-app-shared/references/specialTokens/aTokensData';
+import { addresses as idleTokenAddresses } from 'web-app-shared/references/specialTokens/idleTokensData';
+import { addresses as yearnSimpleVaultAddresses } from 'web-app-shared/references/specialTokens/yearnVaultsData';
+import {
+  PermitData,
+  SmallToken,
+  SmallTokenInfo,
+  Token,
+  TokenWithPrice
+} from 'web-app-shared/references/tokens';
+import { AcrossAPIService } from 'web-app-shared/services/api/mover/across/AcrossAPIService';
+import { MoverAPIApprovalService } from 'web-app-shared/services/api/mover/approval/MoverAPIApprovalService';
+import { GetApprovalReturn } from 'web-app-shared/services/api/mover/approval/types';
+import { MoverAssetsService } from 'web-app-shared/services/api/mover/assets/MoverAPIAssetsService';
+import {
+  TransactionDirection,
+  TransactionType
+} from 'web-app-shared/services/api/mover/transactions/types';
+import { SwapAPIService } from 'web-app-shared/services/api/swap/SwapAPIService';
+import { TransferData } from 'web-app-shared/services/api/swap/types';
+import { EECode } from 'web-app-shared/services/ExpectedError';
+import { MoverError } from 'web-app-shared/services/MoverError';
+import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
+import { BridgeDataResponse } from 'web-app-shared/services/onchain/mover/debit-card/types';
+import { MoverOnChainService } from 'web-app-shared/services/onchain/mover/MoverOnChainService';
+import { ProveOnChainService } from 'web-app-shared/services/onchain/mover/prove-txn/ProveOnChainService';
+import {
+  TopUpProxyContract,
+  TransferProxyContract
+} from 'web-app-shared/services/onchain/mover/types';
+import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
+import { PermitOnChainService } from 'web-app-shared/services/onchain/permit/PermitOnChainService';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State,
   TransactionScenario,
   TransactionStateItem
-} from '@/services/onchain/transaction-states';
+} from 'web-app-shared/services/onchain/transaction-states';
 import {
   CompoundEstimateWithUnwrapResponse,
   UnwrappedData,
   WrappedData
-} from '@/services/onchain/types';
-import { WrappedTokenAToken } from '@/services/onchain/wrapped-tokens/aTokens/token';
-import { WrappedTokenDCult } from '@/services/onchain/wrapped-tokens/dCULT/token';
-import { WrappedTokenGALCX } from '@/services/onchain/wrapped-tokens/gALCX/token';
-import { WrappedTokenGOHM } from '@/services/onchain/wrapped-tokens/gOHM/token';
-import { WrappedTokenIdle } from '@/services/onchain/wrapped-tokens/idle/token';
-import { WrappedToken } from '@/services/onchain/wrapped-tokens/WrappedToken';
-import { WrappedTokenWXBTRFLY } from '@/services/onchain/wrapped-tokens/wxBTRFLY/token';
-import { WrappedTokenYearn } from '@/services/onchain/wrapped-tokens/yearn/token';
-import { hexStringToBuffer, uintBufferToHex } from '@/services/utils/parsing';
+} from 'web-app-shared/services/onchain/types';
+import { WrappedTokenAToken } from 'web-app-shared/services/onchain/wrapped-tokens/aTokens/token';
+import { WrappedTokenDCult } from 'web-app-shared/services/onchain/wrapped-tokens/dCULT/token';
+import { WrappedTokenGALCX } from 'web-app-shared/services/onchain/wrapped-tokens/gALCX/token';
+import { WrappedTokenGOHM } from 'web-app-shared/services/onchain/wrapped-tokens/gOHM/token';
+import { WrappedTokenIdle } from 'web-app-shared/services/onchain/wrapped-tokens/idle/token';
+import { WrappedToken } from 'web-app-shared/services/onchain/wrapped-tokens/WrappedToken';
+import { WrappedTokenWXBTRFLY } from 'web-app-shared/services/onchain/wrapped-tokens/wxBTRFLY/token';
+import { WrappedTokenYearn } from 'web-app-shared/services/onchain/wrapped-tokens/yearn/token';
+import { hexStringToBuffer, uintBufferToHex } from 'web-app-shared/services/utils/parsing';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
 
 export class DebitCardOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'debit-card.on-chain.service';

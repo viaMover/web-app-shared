@@ -1,7 +1,6 @@
+import { Network } from 'web-app-shared/references/network';
+import { MoverError } from 'web-app-shared/services/MoverError';
 import { AbiItem } from 'web3-utils';
-
-import { Network } from '@/references/network';
-import { MoverError } from '@/services/MoverError';
 
 import arbitrum from './arbitrum.json';
 import ethereum from './ethereum.json';
