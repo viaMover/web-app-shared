@@ -1,9 +1,10 @@
 import axios, { AxiosInstance } from 'axios';
 import qs from 'qs';
-import { getEndpoint } from 'web-app-shared/references/endpoints';
-import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
-import { CurrencyCode, MultiRates, Rates } from 'web-app-shared/services/api/mover/rates/types';
-import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
+
+import { getEndpoint } from '../../../../references/endpoints';
+import { MoverAPIService } from '../MoverAPIService';
+import { MoverAPISuccessfulResponse } from '../types';
+import { CurrencyCode, MultiRates, Rates } from './types';
 
 export class MoverAPIRatesService extends MoverAPIService {
   private readonly baseURL: string;

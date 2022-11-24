@@ -2,14 +2,14 @@
   "name": "web-app-shared",
   "version": "1.0.0",
   "description": "Mover web app services",
-  "main": "index.js",
   "repository": "https://github.com/viaMover/web-app-services",
   "author": "Andrew Gergert <axedrew33@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint src/**/*.ts"
+    "build": "tsc --project tsconfig.json",
+    "lint": "eslint src/**/*.ts",
+    "postinstall": "git submodule add git@github.com:viaMover/web-app-shared.git packages/web-app-shared"
   },
   "devDependencies": {
     "@types/qs": "^6.9.7",

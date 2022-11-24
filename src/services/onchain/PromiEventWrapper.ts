@@ -1,7 +1,8 @@
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { Service } from 'web-app-shared/services/Service';
 import { PromiEvent } from 'web3-core';
 import { TransactionReceipt } from 'web3-eth';
+
+import { addSentryBreadcrumb } from '../../logs/sentry';
+import { Service } from '../Service';
 
 /**
  * An abstract class representing basic needs of every on-chain service

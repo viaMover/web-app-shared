@@ -1,6 +1,6 @@
-import { Network } from 'web-app-shared/references/network';
-import { getNetworkAddress, getNetworkConstant } from 'web-app-shared/references/references';
-import { Token } from 'web-app-shared/references/tokens';
+import { Network } from './network';
+import { getNetworkAddress, getNetworkConstant } from './references';
+import { Token } from './tokens';
 
 export const getMoveAssetData = (network: Network): Token => {
   return {

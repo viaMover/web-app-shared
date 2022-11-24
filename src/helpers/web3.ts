@@ -1,6 +1,7 @@
-import { isChainNotValidExpected } from 'web-app-shared/helpers/walletconnect';
 import Web3 from 'web3';
 import { AbstractProvider } from 'web3-core';
+
+import { isChainNotValidExpected } from './walletconnect';
 
 export const getChainIdWithFallback = async (web3: Web3): Promise<number> => {
   try {

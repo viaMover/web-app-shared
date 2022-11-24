@@ -1,4 +1,4 @@
-import { ContractMethod, CustomContractType } from 'web-app-shared/services/onchain/types';
+import { ContractMethod, CustomContractType } from '../../types';
 
 export type AAVEPoolContract = CustomContractType<{
   withdraw(tokenAddress: string, amount: string, addressTo: string): ContractMethod;

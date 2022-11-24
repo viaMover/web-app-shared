@@ -1,14 +1,17 @@
 import dayjs from 'dayjs';
-import { sameAddress } from 'web-app-shared/helpers/addresses';
-import { clampLeft, getInteger, multiply, sub, toWei } from 'web-app-shared/helpers/bigmath';
-import { asyncSleep } from 'web-app-shared/helpers/sleep';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { getCentralTransferProxyAbi } from 'web-app-shared/references/abi';
-import { getUSDCAssetData } from 'web-app-shared/references/assets';
-import { gasDefaults } from 'web-app-shared/references/gasDefaults';
-import { Network } from 'web-app-shared/references/network';
-import { getNetwork, getNetworkAddress } from 'web-app-shared/references/references';
-import { SmallTokenInfo, Token } from 'web-app-shared/references/tokens';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+
+import { sameAddress } from '../../../../helpers/addresses';
+import { clampLeft, getInteger, multiply, sub, toWei } from '../../../../helpers/bigmath';
+import { asyncSleep } from '../../../../helpers/sleep';
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { getCentralTransferProxyAbi } from '../../../../references/abi';
+import { getUSDCAssetData } from '../../../../references/assets';
+import { gasDefaults } from '../../../../references/gasDefaults';
+import { Network } from '../../../../references/network';
+import { getNetwork, getNetworkAddress } from '../../../../references/references';
+import { SmallTokenInfo, Token } from '../../../../references/tokens';
 import {
   DepositExecution,
   DepositOnlyTransactionData,
@@ -19,31 +22,26 @@ import {
   WithdrawExecution,
   WithdrawOnlyTransactionData,
   WithdrawTransactionData
-} from 'web-app-shared/services/api/mover/savings-plus/types';
-import { TransactionStatus } from 'web-app-shared/services/api/mover/subsidized/types';
-import {
-  TransactionDirection,
-  TransactionType
-} from 'web-app-shared/services/api/mover/transactions/types';
-import { TransferData } from 'web-app-shared/services/api/swap/types';
-import { EECode } from 'web-app-shared/services/ExpectedError';
-import { MoverError } from 'web-app-shared/services/MoverError';
-import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
-import { MoverOnChainService } from 'web-app-shared/services/onchain/mover/MoverOnChainService';
-import { InvalidNetworkForOperationError } from 'web-app-shared/services/onchain/mover/savings-plus/InvalidNetworkForOperationError';
-import { PreparedAction } from 'web-app-shared/services/onchain/mover/subsidized/types';
-import { TransferProxyContract } from 'web-app-shared/services/onchain/mover/types';
-import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
+} from '../../../api/mover/savings-plus/types';
+import { TransactionStatus } from '../../../api/mover/subsidized/types';
+import { TransactionDirection, TransactionType } from '../../../api/mover/transactions/types';
+import { TransferData } from '../../../api/swap/types';
+import { EECode } from '../../../ExpectedError';
+import { MoverError } from '../../../MoverError';
+import { NetworkFeatureNotSupportedError } from '../../../NetworkFeatureNotSupportedError';
+import { OnChainServiceError } from '../../OnChainServiceError';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State,
   TransactionScenario,
   TransactionStateItem
-} from 'web-app-shared/services/onchain/transaction-states';
-import { CompoundEstimateResponse } from 'web-app-shared/services/onchain/types';
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
+} from '../../transaction-states';
+import { CompoundEstimateResponse } from '../../types';
+import { MoverOnChainService } from '../MoverOnChainService';
+import { PreparedAction } from '../subsidized/types';
+import { TransferProxyContract } from '../types';
+import { InvalidNetworkForOperationError } from './InvalidNetworkForOperationError';
 
 export class SavingsPlusOnChainService extends MoverOnChainService {
   protected readonly centralTransferProxyContract: TransferProxyContract | undefined;

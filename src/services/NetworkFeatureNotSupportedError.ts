@@ -1,5 +1,4 @@
-import { Network } from 'web-app-shared/references/network';
-
+import { Network } from '../references/network';
 import { MoverError } from './MoverError';
 
 export class NetworkFeatureNotSupportedError extends MoverError {

@@ -1,31 +1,25 @@
 import dayjs from 'dayjs';
-import { getUSDCAssetData } from 'web-app-shared/references/assets';
-import { Network } from 'web-app-shared/references/network';
-import { SmallTokenInfo } from 'web-app-shared/references/tokens';
-import { MoverAPIApprovalService } from 'web-app-shared/services/api/mover/approval/MoverAPIApprovalService';
-import { MoverAssetsService } from 'web-app-shared/services/api/mover/assets/MoverAPIAssetsService';
-import {
-  DepositExecution,
-  WithdrawExecution
-} from 'web-app-shared/services/api/mover/savings-plus/types';
-import {
-  Status,
-  Transaction,
-  TransactionType
-} from 'web-app-shared/services/api/mover/transactions/types';
-import { MoverError } from 'web-app-shared/services/MoverError';
-import { DebitCardOnChainService } from 'web-app-shared/services/onchain/mover/debit-card/DebitCardOnChainService';
-import { ProveOnChainService } from 'web-app-shared/services/onchain/mover/prove-txn/ProveOnChainService';
-import { SavingsPlusOnChainService } from 'web-app-shared/services/onchain/mover/savings-plus/SavingsPlusOnChainService';
-import { SmartTreasuryOnChainService } from 'web-app-shared/services/onchain/mover/smart-treasury/SmartTreasuryOnChainService';
-import { StakingUbtOnChainService } from 'web-app-shared/services/onchain/mover/staking-ubt/StakingUbtOnChainService';
-import { PermitOnChainService } from 'web-app-shared/services/onchain/permit/PermitOnChainService';
+import Web3 from 'web3';
+
+import { getUSDCAssetData } from '../references/assets';
+import { Network } from '../references/network';
+import { SmallTokenInfo } from '../references/tokens';
+import { MoverAPIApprovalService } from '../services/api/mover/approval/MoverAPIApprovalService';
+import { MoverAssetsService } from '../services/api/mover/assets/MoverAPIAssetsService';
+import { DepositExecution, WithdrawExecution } from '../services/api/mover/savings-plus/types';
+import { Status, Transaction, TransactionType } from '../services/api/mover/transactions/types';
+import { MoverError } from '../services/MoverError';
+import { DebitCardOnChainService } from '../services/onchain/mover/debit-card/DebitCardOnChainService';
+import { ProveOnChainService } from '../services/onchain/mover/prove-txn/ProveOnChainService';
+import { SavingsPlusOnChainService } from '../services/onchain/mover/savings-plus/SavingsPlusOnChainService';
+import { SmartTreasuryOnChainService } from '../services/onchain/mover/smart-treasury/SmartTreasuryOnChainService';
+import { StakingUbtOnChainService } from '../services/onchain/mover/staking-ubt/StakingUbtOnChainService';
+import { PermitOnChainService } from '../services/onchain/permit/PermitOnChainService';
 import {
   InternalTransactionType,
   State,
   TransactionScenario
-} from 'web-app-shared/services/onchain/transaction-states';
-import Web3 from 'web3';
+} from '../services/onchain/transaction-states';
 
 const getFinalTypeByTxType = (txType: TransactionType): InternalTransactionType => {
   switch (txType) {

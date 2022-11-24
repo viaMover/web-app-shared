@@ -2,12 +2,21 @@ import { Breadcrumb } from '@sentry/types';
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import axiosRetry, { exponentialDelay } from 'axios-retry';
 import dayjs from 'dayjs';
-import { getPureBaseAssetAddress, sameAddress } from 'web-app-shared/helpers/addresses';
-import { flattenDeep } from 'web-app-shared/helpers/arrays';
-import { BadRequestDescription, ResponseHTTPErrorCode } from 'web-app-shared/helpers/http';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { Network } from 'web-app-shared/references/network';
-import { getNetwork, isBaseAsset } from 'web-app-shared/references/references';
+import Web3 from 'web3';
+
+import { getPureBaseAssetAddress, sameAddress } from '../../../../helpers/addresses';
+import { flattenDeep } from '../../../../helpers/arrays';
+import { BadRequestDescription, ResponseHTTPErrorCode } from '../../../../helpers/http';
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { Network } from '../../../../references/network';
+import { getNetwork, isBaseAsset } from '../../../../references/references';
+import { EECode, ExpectedError } from '../../../ExpectedError';
+import { MoverError } from '../../../MoverError';
+import { NetworkFeatureNotSupportedError } from '../../../NetworkFeatureNotSupportedError';
+import { SingleNetworkService } from '../../../SingleNetworkService';
+import { getParamsSerializer } from '../../../utils/params';
+import { ISwapper } from '../ISwapper';
+import { TransferData } from '../types';
 import {
   OneInchBadRequestResponse,
   OneInchToken,
@@ -17,16 +26,7 @@ import {
   SwapParams,
   SwapResponse,
   TokensResponse
-} from 'web-app-shared/services/api/swap/1inch/types';
-import { ISwapper } from 'web-app-shared/services/api/swap/ISwapper';
-import { EECode, ExpectedError } from 'web-app-shared/services/ExpectedError';
-import { MoverError } from 'web-app-shared/services/MoverError';
-import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
-import { SingleNetworkService } from 'web-app-shared/services/SingleNetworkService';
-import { getParamsSerializer } from 'web-app-shared/services/utils/params';
-import Web3 from 'web3';
-
-import { TransferData } from '../types';
+} from './types';
 
 export class OneInchAPIService extends SingleNetworkService implements ISwapper {
   protected baseURL: string;

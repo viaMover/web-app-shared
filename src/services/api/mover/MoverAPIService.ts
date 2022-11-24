@@ -6,10 +6,10 @@ import axios, {
   AxiosRequestHeaders,
   AxiosResponse
 } from 'axios';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { MoverError } from 'web-app-shared/services/MoverError';
-import { Service } from 'web-app-shared/services/Service';
 
+import { addSentryBreadcrumb } from '../../../logs/sentry';
+import { MoverError } from '../../MoverError';
+import { Service } from '../../Service';
 import { MoverAPIError } from './MoverAPIError';
 import {
   isErrorResponse,

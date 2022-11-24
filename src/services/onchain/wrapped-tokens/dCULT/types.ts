@@ -1,4 +1,4 @@
-import { ContractMethod, CustomContractType } from 'web-app-shared/services/onchain/types';
+import { ContractMethod, CustomContractType } from '../../types';
 
 export type dCULTContract = CustomContractType<{
   withdraw(pid: string, amount: string): ContractMethod;

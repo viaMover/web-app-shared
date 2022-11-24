@@ -1,4 +1,4 @@
-import { MoverError } from 'web-app-shared/services/MoverError';
+import { MoverError } from './MoverError';
 
 export enum ContentName {
   TxInfo = 'txInfo'

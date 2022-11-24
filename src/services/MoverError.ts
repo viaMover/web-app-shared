@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { CustomError } from 'ts-custom-error';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
+
+import { addSentryBreadcrumb } from '../logs/sentry';
 
 export class MoverError extends CustomError {
   protected payload?: Record<string, unknown>;

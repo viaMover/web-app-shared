@@ -1,5 +1,5 @@
-import { Network } from 'web-app-shared/references/network';
-import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
+import { Network } from '../../../../references/network';
+import { OnChainServiceError } from '../../OnChainServiceError';
 
 export class InvalidNetworkForOperationError extends OnChainServiceError {
   protected payload: { fromNetwork: Network; toNetwork: Network };

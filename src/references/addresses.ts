@@ -1,5 +1,5 @@
-import { Network } from 'web-app-shared/references/network';
-import { AddressMap } from 'web-app-shared/references/types';
+import { Network } from './network';
+import { AddressMap } from './types';
 
 export const DefaultAddress = '0x1';
 

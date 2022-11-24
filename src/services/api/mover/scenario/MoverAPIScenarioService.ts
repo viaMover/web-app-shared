@@ -1,15 +1,16 @@
 import axios, { AxiosInstance } from 'axios';
-import { mapScenarioDataToPreusoUniqueId } from 'web-app-shared/helpers/scenarios';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { getEndpoint } from 'web-app-shared/references/endpoints';
-import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
+
+import { mapScenarioDataToPreusoUniqueId } from '../../../../helpers/scenarios';
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { getEndpoint } from '../../../../references/endpoints';
+import { MoverAPIService } from '../MoverAPIService';
+import { MoverAPISuccessfulResponse } from '../types';
 import {
   GetScenarioDataByHashPayload,
   ScenarioPayloadData,
   SetScenarioDataByUniqIdPayload,
   SetScenarioHashByUniqIdPayload
-} from 'web-app-shared/services/api/mover/scenario/types';
-import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
+} from './types';
 
 export class MoverAPIScenarioService extends MoverAPIService {
   protected baseURL: string;

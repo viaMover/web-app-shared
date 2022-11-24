@@ -1,24 +1,25 @@
-import { sameAddress } from 'web-app-shared/helpers/addresses';
-import { floorDivide, multiply, sub, toWei } from 'web-app-shared/helpers/bigmath';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { DCULT_ABI } from 'web-app-shared/references/abi';
-import { getCULTAssetData } from 'web-app-shared/references/assets';
-import { Network } from 'web-app-shared/references/network';
-import { getNetworkAddress } from 'web-app-shared/references/references';
-import { SmallToken, SmallTokenInfo } from 'web-app-shared/references/tokens';
-import { currentBalance } from 'web-app-shared/services/onchain/erc20/balance';
-import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { AbiItem } from 'web3-utils';
+
+import { sameAddress } from '../../../../helpers/addresses';
+import { floorDivide, multiply, sub, toWei } from '../../../../helpers/bigmath';
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { DCULT_ABI } from '../../../../references/abi';
+import { getCULTAssetData } from '../../../../references/assets';
+import { Network } from '../../../../references/network';
+import { getNetworkAddress } from '../../../../references/references';
+import { SmallToken, SmallTokenInfo } from '../../../../references/tokens';
+import { currentBalance } from '../../erc20/balance';
+import { OnChainServiceError } from '../../OnChainServiceError';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State
-} from 'web-app-shared/services/onchain/transaction-states';
-import { EstimateResponse, TransactionsParams } from 'web-app-shared/services/onchain/types';
-import { dCULTContract } from 'web-app-shared/services/onchain/wrapped-tokens/dCULT/types';
-import { WrappedToken } from 'web-app-shared/services/onchain/wrapped-tokens/WrappedToken';
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
+} from '../../transaction-states';
+import { EstimateResponse, TransactionsParams } from '../../types';
+import { WrappedToken } from '../WrappedToken';
+import { dCULTContract } from './types';
 
 export class WrappedTokenDCult extends WrappedToken {
   public readonly wrappedTokenAddress: string;

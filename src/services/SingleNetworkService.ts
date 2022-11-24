@@ -1,5 +1,5 @@
-import { Network } from 'web-app-shared/references/network';
-import { Service } from 'web-app-shared/services/Service';
+import { Network } from '../references/network';
+import { Service } from './Service';
 
 export abstract class SingleNetworkService extends Service {
   public readonly network: Network;

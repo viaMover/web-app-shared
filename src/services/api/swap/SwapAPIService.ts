@@ -1,10 +1,9 @@
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { Network } from 'web-app-shared/references/network';
-import { ZeroXAPIService } from 'web-app-shared/services/api/swap/0x/ZeroXAPIService';
-import { OneInchAPIService } from 'web-app-shared/services/api/swap/1inch/OneInchAPIService';
-import { ISwapper } from 'web-app-shared/services/api/swap/ISwapper';
-import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
-
+import { addSentryBreadcrumb } from '../../../logs/sentry';
+import { Network } from '../../../references/network';
+import { NetworkFeatureNotSupportedError } from '../../NetworkFeatureNotSupportedError';
+import { ZeroXAPIService } from './0x/ZeroXAPIService';
+import { OneInchAPIService } from './1inch/OneInchAPIService';
+import { ISwapper } from './ISwapper';
 import { TransferData } from './types';
 
 export class SwapAPIService {

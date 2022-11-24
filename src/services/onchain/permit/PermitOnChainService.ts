@@ -3,14 +3,15 @@ import {
   PermitParams,
   Web3ProviderConnector
 } from '@1inch/permit-signed-approvals-utils';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { ERC20_ABI, ERC2612_PERMIT_ABI } from 'web-app-shared/references/abi';
-import { Network } from 'web-app-shared/references/network';
-import { MoverError } from 'web-app-shared/services/MoverError';
-import { OnChainService } from 'web-app-shared/services/onchain/OnChainService';
-import { TransactionsParams } from 'web-app-shared/services/onchain/types';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
+
+import { addSentryBreadcrumb } from '../../../logs/sentry';
+import { ERC20_ABI, ERC2612_PERMIT_ABI } from '../../../references/abi';
+import { Network } from '../../../references/network';
+import { MoverError } from '../../MoverError';
+import { OnChainService } from '../OnChainService';
+import { TransactionsParams } from '../types';
 
 /**
  * A class representing basic functions for EIP-2612 Permit

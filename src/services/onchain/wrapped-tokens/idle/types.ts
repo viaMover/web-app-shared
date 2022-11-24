@@ -1,4 +1,4 @@
-import { ContractMethod, CustomContractType } from 'web-app-shared/services/onchain/types';
+import { ContractMethod, CustomContractType } from '../../types';
 
 export type IdleContract = CustomContractType<{
   redeemIdleToken(amount: string): ContractMethod;

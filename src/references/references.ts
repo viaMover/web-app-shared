@@ -1,11 +1,11 @@
-import { sameAddress } from 'web-app-shared/helpers/addresses';
-import { DefaultAddress, NetworkAddresses } from 'web-app-shared/references/addresses';
-import { getUBTAssetData, getUSDCAssetData } from 'web-app-shared/references/assets';
-import { DefaultSlippage, networkConstants } from 'web-app-shared/references/constants';
-import { Network } from 'web-app-shared/references/network';
-import { AvailableNetworks, networks } from 'web-app-shared/references/networks';
-import { Token } from 'web-app-shared/references/tokens';
-import { AddressMapKey, ConstantsMap, NetworkInfo } from 'web-app-shared/references/types';
+import { sameAddress } from '../helpers/addresses';
+import { DefaultAddress, NetworkAddresses } from './addresses';
+import { getUBTAssetData, getUSDCAssetData } from './assets';
+import { DefaultSlippage, networkConstants } from './constants';
+import { Network } from './network';
+import { AvailableNetworks, networks } from './networks';
+import { Token } from './tokens';
+import { AddressMapKey, ConstantsMap, NetworkInfo } from './types';
 
 export const getNetworkByChainId = (chainId: number): NetworkInfo | undefined => {
   return (Object.values(networks) as Array<NetworkInfo>).find((n) => n.chainId === chainId);

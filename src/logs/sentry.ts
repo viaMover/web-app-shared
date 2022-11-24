@@ -2,10 +2,13 @@ import {
   addBreadcrumb as originalAddSentryBreadcrumb,
   captureException as originalCaptureException
 } from '@sentry/core';
-import { getFeatureFlag } from 'web-app-shared/references/feature-flags';
+
+import { getFeatureFlag } from '../references/feature-flags';
+
+const a = true;
 
 let addSentryBreadcrumbFunc = originalAddSentryBreadcrumb;
-if (getFeatureFlag('IS_CONSOLE_ENABLED')) {
+if (a) {
   addSentryBreadcrumbFunc = (breadcrumb) => {
     switch (breadcrumb.type) {
       case 'error':
@@ -28,7 +31,7 @@ if (getFeatureFlag('IS_CONSOLE_ENABLED')) {
 }
 
 let captureSentryExceptionFunc = originalCaptureException;
-if (getFeatureFlag('IS_CONSOLE_ENABLED')) {
+if (a) {
   captureSentryExceptionFunc = (exception, captureContext) => {
     console.error(exception, { captureContext });
     return originalCaptureException(exception, captureContext);

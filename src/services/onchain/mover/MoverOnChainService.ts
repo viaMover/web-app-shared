@@ -1,20 +1,20 @@
 import { BigNumber } from 'bignumber.js';
-import { convertStringToHexWithPrefix } from 'web-app-shared/helpers/addresses';
-import { multiply } from 'web-app-shared/helpers/bigmath';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { Network } from 'web-app-shared/references/network';
-import { getNetworkAddress } from 'web-app-shared/references/references';
-import { AddressMapKey } from 'web-app-shared/references/types';
-import { MoverAPISubsidizedService } from 'web-app-shared/services/api/mover/subsidized/MoverAPISubsidizedService';
-import { TransferData } from 'web-app-shared/services/api/swap/types';
-import { SubsidizedTransactionsOnChainService } from 'web-app-shared/services/onchain/mover/subsidized/SubsidizedTransactionsOnChainService';
-import { PreparedAction } from 'web-app-shared/services/onchain/mover/subsidized/types';
 import Web3 from 'web3';
 import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
+import { convertStringToHexWithPrefix } from '../../../helpers/addresses';
+import { multiply } from '../../../helpers/bigmath';
+import { addSentryBreadcrumb } from '../../../logs/sentry';
+import { Network } from '../../../references/network';
+import { getNetworkAddress } from '../../../references/references';
+import { AddressMapKey } from '../../../references/types';
+import { MoverAPISubsidizedService } from '../../api/mover/subsidized/MoverAPISubsidizedService';
+import { TransferData } from '../../api/swap/types';
 import { OnChainService } from '../OnChainService';
 import { CustomContractType } from '../types';
+import { SubsidizedTransactionsOnChainService } from './subsidized/SubsidizedTransactionsOnChainService';
+import { PreparedAction } from './subsidized/types';
 
 export abstract class MoverOnChainService extends OnChainService {
   protected subsidizedOnChainService: SubsidizedTransactionsOnChainService;

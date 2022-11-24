@@ -1,18 +1,18 @@
 import { Breadcrumb } from '@sentry/types';
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import axiosRetry from 'axios-retry';
-import { getPureBaseAssetAddress } from 'web-app-shared/helpers/addresses';
-import { greaterThan, multiply } from 'web-app-shared/helpers/bigmath';
-import { ResponseHTTPErrorCode } from 'web-app-shared/helpers/http';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { Network } from 'web-app-shared/references/network';
-import { isBaseAsset } from 'web-app-shared/references/references';
-import { EECode, ExpectedError } from 'web-app-shared/services/ExpectedError';
-import { MoverError } from 'web-app-shared/services/MoverError';
-import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
-import { Service } from 'web-app-shared/services/Service';
-import { getParamsSerializer } from 'web-app-shared/services/utils/params';
 
+import { getPureBaseAssetAddress } from '../../../../helpers/addresses';
+import { greaterThan, multiply } from '../../../../helpers/bigmath';
+import { ResponseHTTPErrorCode } from '../../../../helpers/http';
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { Network } from '../../../../references/network';
+import { isBaseAsset } from '../../../../references/references';
+import { EECode, ExpectedError } from '../../../ExpectedError';
+import { MoverError } from '../../../MoverError';
+import { NetworkFeatureNotSupportedError } from '../../../NetworkFeatureNotSupportedError';
+import { Service } from '../../../Service';
+import { getParamsSerializer } from '../../../utils/params';
 import { ISwapper } from '../ISwapper';
 import { TransferData } from '../types';
 import {

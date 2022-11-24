@@ -11,19 +11,16 @@ import {
 import { Address, bigIntToUnpaddedBuffer } from '@ethereumjs/util';
 import { BaseTrie as Trie } from 'merkle-patricia-tree';
 import { BranchNode, ExtensionNode, LeafNode } from 'merkle-patricia-tree/dist.browser/trieNode';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { Network } from 'web-app-shared/references/network';
-import { getNetwork } from 'web-app-shared/references/references';
-import { MoverError } from 'web-app-shared/services/MoverError';
-import { MoverOnChainService } from 'web-app-shared/services/onchain/mover/MoverOnChainService';
-import { RPCTransaction } from 'web-app-shared/services/onchain/mover/prove-txn/types';
-import { consumeCommonPrefix, getNibbles } from 'web-app-shared/services/utils/mpt';
-import {
-  bigIntToDecimalString,
-  bigIntToHexString,
-  uintBufferToHex
-} from 'web-app-shared/services/utils/parsing';
 import Web3 from 'web3';
+
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { Network } from '../../../../references/network';
+import { getNetwork } from '../../../../references/references';
+import { MoverError } from '../../../MoverError';
+import { consumeCommonPrefix, getNibbles } from '../../../utils/mpt';
+import { bigIntToDecimalString, bigIntToHexString, uintBufferToHex } from '../../../utils/parsing';
+import { MoverOnChainService } from '../MoverOnChainService';
+import { RPCTransaction } from './types';
 
 export class ProveOnChainService extends MoverOnChainService {
   constructor(currentAddress: string, network: Network, web3Client: Web3) {

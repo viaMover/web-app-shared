@@ -1,6 +1,6 @@
-import { sameAddress } from 'web-app-shared/helpers/addresses';
-import { Network } from 'web-app-shared/references/network';
-import { SmallTokenInfo } from 'web-app-shared/references/tokens';
+import { sameAddress } from '../../helpers/addresses';
+import { Network } from '../network';
+import { SmallTokenInfo } from '../tokens';
 
 export type WrapTokenData = {
   name: string;

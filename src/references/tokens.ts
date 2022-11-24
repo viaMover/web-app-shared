@@ -1,4 +1,4 @@
-import { Network } from 'web-app-shared/references/network';
+import { Network } from './network';
 
 export type SmallTokenInfo = {
   address: string;

@@ -1,8 +1,9 @@
 import axios, { AxiosInstance } from 'axios';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { getEndpoint } from 'web-app-shared/references/endpoints';
-import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
-import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
+
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { getEndpoint } from '../../../../references/endpoints';
+import { MoverAPIService } from '../MoverAPIService';
+import { MoverAPISuccessfulResponse } from '../types';
 
 export class MoverAPIConfirmationService extends MoverAPIService {
   protected baseURL: string;

@@ -1,7 +1,7 @@
-import { Network } from 'web-app-shared/references/network';
-import { MoverError } from 'web-app-shared/services/MoverError';
 import { AbiItem } from 'web3-utils';
 
+import { MoverError } from '../../../services/MoverError';
+import { Network } from '../../network';
 import arbitrum from './arbitrum.json';
 import avalanche from './avalanche.json';
 import binance from './binance.json';

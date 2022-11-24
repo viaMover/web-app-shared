@@ -1,4 +1,8 @@
-import { sameAddress } from 'web-app-shared/helpers/addresses';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { AbiItem } from 'web3-utils';
+
+import { sameAddress } from '../../../../helpers/addresses';
 import {
   convertToString,
   floorDivide,
@@ -6,30 +10,24 @@ import {
   multiply,
   sub,
   toWei
-} from 'web-app-shared/helpers/bigmath';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { GOHM_ABI, OLYMPUS_STAKING_ABI } from 'web-app-shared/references/abi';
-import { getGOHMAssetData, getOHMAssetData } from 'web-app-shared/references/assets';
-import { Network } from 'web-app-shared/references/network';
-import { getNetworkAddress } from 'web-app-shared/references/references';
-import { SmallToken, SmallTokenInfo } from 'web-app-shared/references/tokens';
-import { MoverError } from 'web-app-shared/services/MoverError';
-import { currentBalance } from 'web-app-shared/services/onchain/erc20/balance';
-import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
+} from '../../../../helpers/bigmath';
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { GOHM_ABI, OLYMPUS_STAKING_ABI } from '../../../../references/abi';
+import { getGOHMAssetData, getOHMAssetData } from '../../../../references/assets';
+import { Network } from '../../../../references/network';
+import { getNetworkAddress } from '../../../../references/references';
+import { SmallToken, SmallTokenInfo } from '../../../../references/tokens';
+import { MoverError } from '../../../MoverError';
+import { currentBalance } from '../../erc20/balance';
+import { OnChainServiceError } from '../../OnChainServiceError';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State
-} from 'web-app-shared/services/onchain/transaction-states';
-import { EstimateResponse, TransactionsParams } from 'web-app-shared/services/onchain/types';
-import {
-  gOHMContract,
-  OlympusStakingContract
-} from 'web-app-shared/services/onchain/wrapped-tokens/gOHM/types';
-import { WrappedToken } from 'web-app-shared/services/onchain/wrapped-tokens/WrappedToken';
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
+} from '../../transaction-states';
+import { EstimateResponse, TransactionsParams } from '../../types';
+import { WrappedToken } from '../WrappedToken';
+import { gOHMContract, OlympusStakingContract } from './types';
 
 export class WrappedTokenGOHM extends WrappedToken {
   public readonly wrappedTokenAddress: string;

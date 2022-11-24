@@ -1,16 +1,17 @@
 import axios, { AxiosInstance } from 'axios';
-import { getEndpoint } from 'web-app-shared/references/endpoints';
-import { CountryNotSupportedError } from 'web-app-shared/services/api/mover/card/CountryNotSupportedError';
+
+import { getEndpoint } from '../../../../references/endpoints';
+import { MoverAPIError } from '../MoverAPIError';
+import { MoverAPIService } from '../MoverAPIService';
+import { MoverAPISuccessfulResponse } from '../types';
+import { CountryNotSupportedError } from './CountryNotSupportedError';
 import {
   ContactDetails,
   GetInfoResponse,
   GetInfoResponseBase,
   GetInfoResponseWithHistory,
   PersonalInfo
-} from 'web-app-shared/services/api/mover/card/types';
-import { MoverAPIError } from 'web-app-shared/services/api/mover/MoverAPIError';
-import { MoverAPIService } from 'web-app-shared/services/api/mover/MoverAPIService';
-import { MoverAPISuccessfulResponse } from 'web-app-shared/services/api/mover/types';
+} from './types';
 
 export class MoverAPICardService extends MoverAPIService {
   protected readonly client: AxiosInstance;

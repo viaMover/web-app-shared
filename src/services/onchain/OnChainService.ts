@@ -1,26 +1,22 @@
-import { getPureBaseAssetAddress } from 'web-app-shared/helpers/addresses';
-import {
-  floorDivide,
-  fromWei,
-  greaterThan,
-  MAXUINT256,
-  multiply
-} from 'web-app-shared/helpers/bigmath';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { ERC20_ABI } from 'web-app-shared/references/abi';
-import { Network } from 'web-app-shared/references/network';
-import { isBaseAsset } from 'web-app-shared/references/references';
-import { SmallTokenInfo } from 'web-app-shared/references/tokens';
-import { TransactionInMemPoolTemplate } from 'web-app-shared/services/api/mover/transactions/types';
-import { EECode, ExpectedError } from 'web-app-shared/services/ExpectedError';
-import { NetworkFeatureNotSupportedError } from 'web-app-shared/services/NetworkFeatureNotSupportedError';
-import { PromiEventWrapper } from 'web-app-shared/services/onchain/PromiEventWrapper';
-import { isRejectedRequestError } from 'web-app-shared/services/onchain/ProviderRPCError';
-import {
-  InternalTransactionType,
-  ITransactionStateEventBus,
-  State
-} from 'web-app-shared/services/onchain/transaction-states';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { ContractOptions } from 'web3-eth-contract';
+import { AbiItem } from 'web3-utils';
+
+import { getPureBaseAssetAddress } from '../../helpers/addresses';
+import { floorDivide, fromWei, greaterThan, MAXUINT256, multiply } from '../../helpers/bigmath';
+import { addSentryBreadcrumb } from '../../logs/sentry';
+import { ERC20_ABI } from '../../references/abi';
+import { Network } from '../../references/network';
+import { isBaseAsset } from '../../references/references';
+import { SmallTokenInfo } from '../../references/tokens';
+import { TransactionInMemPoolTemplate } from '../api/mover/transactions/types';
+import { EECode, ExpectedError } from '../ExpectedError';
+import { NetworkFeatureNotSupportedError } from '../NetworkFeatureNotSupportedError';
+import { OnChainServiceError } from './OnChainServiceError';
+import { PromiEventWrapper } from './PromiEventWrapper';
+import { isRejectedRequestError } from './ProviderRPCError';
+import { InternalTransactionType, ITransactionStateEventBus, State } from './transaction-states';
 import {
   AnyFn,
   CompoundEstimateResponse,
@@ -28,13 +24,7 @@ import {
   ERC20ContractMethods,
   IMemPoolTxAdder,
   TransactionsParams
-} from 'web-app-shared/services/onchain/types';
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-import { ContractOptions } from 'web3-eth-contract';
-import { AbiItem } from 'web3-utils';
-
-import { OnChainServiceError } from './OnChainServiceError';
+} from './types';
 
 export abstract class OnChainService extends PromiEventWrapper {
   protected readonly currentAddress: string;

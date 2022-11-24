@@ -1,4 +1,8 @@
-import { sameAddress } from 'web-app-shared/helpers/addresses';
+import Web3 from 'web3';
+import { TransactionReceipt } from 'web3-eth';
+import { AbiItem } from 'web3-utils';
+
+import { sameAddress } from '../../../../helpers/addresses';
 import {
   convertToString,
   divide,
@@ -7,29 +11,26 @@ import {
   multiply,
   sub,
   toWei
-} from 'web-app-shared/helpers/bigmath';
-import { InMemoryCache } from 'web-app-shared/helpers/cache';
-import { addSentryBreadcrumb } from 'web-app-shared/logs/sentry';
-import { IDLE_TOKEN_ABI } from 'web-app-shared/references/abi';
-import { Network } from 'web-app-shared/references/network';
+} from '../../../../helpers/bigmath';
+import { InMemoryCache } from '../../../../helpers/cache';
+import { addSentryBreadcrumb } from '../../../../logs/sentry';
+import { IDLE_TOKEN_ABI } from '../../../../references/abi';
+import { Network } from '../../../../references/network';
 import {
   getIdleTokenByAddress,
   WrapTokenData
-} from 'web-app-shared/references/specialTokens/idleTokensData';
-import { SmallToken, SmallTokenInfo } from 'web-app-shared/references/tokens';
-import { currentBalance } from 'web-app-shared/services/onchain/erc20/balance';
-import { OnChainServiceError } from 'web-app-shared/services/onchain/OnChainServiceError';
+} from '../../../../references/specialTokens/idleTokensData';
+import { SmallToken, SmallTokenInfo } from '../../../../references/tokens';
+import { currentBalance } from '../../erc20/balance';
+import { OnChainServiceError } from '../../OnChainServiceError';
 import {
   InternalTransactionType,
   ITransactionStateEventBus,
   State
-} from 'web-app-shared/services/onchain/transaction-states';
-import { EstimateResponse, TransactionsParams } from 'web-app-shared/services/onchain/types';
-import { IdleContract } from 'web-app-shared/services/onchain/wrapped-tokens/idle/types';
-import { WrappedToken } from 'web-app-shared/services/onchain/wrapped-tokens/WrappedToken';
-import Web3 from 'web3';
-import { TransactionReceipt } from 'web3-eth';
-import { AbiItem } from 'web3-utils';
+} from '../../transaction-states';
+import { EstimateResponse, TransactionsParams } from '../../types';
+import { WrappedToken } from '../WrappedToken';
+import { IdleContract } from './types';
 
 export class WrappedTokenIdle extends WrappedToken {
   private readonly wrapTokenData: WrapTokenData;
