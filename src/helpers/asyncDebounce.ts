@@ -1,9 +1,9 @@
 const promises: Record<string, unknown> = {};
 
-export function asyncDebounce<TArgs extends unknown[], TReturn>(
+export const asyncDebounce = <TArgs extends unknown[], TReturn>(
   fn: (...parameters: TArgs) => TReturn,
   ...args: TArgs
-): TReturn {
+): TReturn => {
   const debounceKey = fn.name + JSON.stringify(args);
   const runningPromise = promises[debounceKey];
   if (runningPromise !== undefined) {
@@ -21,4 +21,4 @@ export function asyncDebounce<TArgs extends unknown[], TReturn>(
     });
 
   return fetchPromise;
-}
+};
