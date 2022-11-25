@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { Md5 } from 'ts-md5';
 
-import { getEndpoint } from '../../../../references/endpoints';
 import { getNetworkByChainId } from '../../../../references/references';
 import { ContentName, SameContentError } from '../../../SameContentError';
 import { MoverAPIService } from '../MoverAPIService';
@@ -9,19 +8,16 @@ import { MoverAPISuccessfulResponse } from '../types';
 import { ApiTransactionsResponse, GetTransactionListReturnItem, TransactionType } from './types';
 
 export class MoverAPITransactionsService extends MoverAPIService {
-  protected baseURL: string;
-
+  protected readonly baseURL: string;
   protected readonly client: AxiosInstance;
-
-  public static localStorageKey = 'txInfo-hash';
   private contentHash: string | undefined;
 
-  constructor() {
+  constructor(baseURL: string) {
     super('transactions.api.service');
-    this.baseURL = `${getEndpoint('API_VIEW_SERVICE_URL')}/v2/tx`;
+    this.baseURL = baseURL;
     this.client = this.applyAxiosInterceptors(
       axios.create({
-        baseURL: this.baseURL
+        baseURL: `${this.baseURL}/v2/tx`
       })
     );
   }

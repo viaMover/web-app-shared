@@ -1,19 +1,17 @@
 import axios, { AxiosInstance } from 'axios';
 
 import { addSentryBreadcrumb } from '../../../../logs/sentry';
-import { getEndpoint } from '../../../../references/endpoints';
 import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';
 
 export class MoverAPIConfirmationService extends MoverAPIService {
-  protected baseURL: string;
-
+  protected readonly baseURL: string;
   protected readonly client: AxiosInstance;
   protected readonly sentryCategoryPrefix: string = 'confirmation.api.service';
 
-  constructor() {
+  constructor(baseURL: string) {
     super('confirmation.api.service');
-    this.baseURL = this.lookupBaseURL();
+    this.baseURL = baseURL;
     this.client = this.applyAxiosInterceptors(
       axios.create({
         baseURL: this.baseURL
@@ -64,9 +62,5 @@ export class MoverAPIConfirmationService extends MoverAPIService {
     } catch (e) {
       return false;
     }
-  }
-
-  protected lookupBaseURL(): string {
-    return getEndpoint('API_TAG_SERVICE_URL');
   }
 }

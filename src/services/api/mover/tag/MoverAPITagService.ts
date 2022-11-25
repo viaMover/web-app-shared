@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import Web3 from 'web3';
 
 import { addSentryBreadcrumb } from '../../../../logs/sentry';
-import { getEndpoint } from '../../../../references/endpoints';
 import { EECode, ExpectedError } from '../../../ExpectedError';
 import { MoverError } from '../../../MoverError';
 import { isRejectedRequestError } from '../../../onchain/ProviderRPCError';
@@ -32,13 +31,12 @@ import {
 } from './types';
 
 export class MoverAPITagService extends MoverAPIService {
-  protected baseURL: string;
-
+  protected readonly baseURL: string;
   protected readonly client: AxiosInstance;
 
-  constructor() {
+  constructor(baseURL: string) {
     super('tag.api.service');
-    this.baseURL = this.lookupBaseURL();
+    this.baseURL = baseURL;
     this.client = this.applyAxiosInterceptors(
       axios.create({
         baseURL: this.baseURL
@@ -361,9 +359,5 @@ export class MoverAPITagService extends MoverAPIService {
   public async getTagsAmount(): Promise<TagsAmountResponse> {
     return (await this.client.get<MoverAPISuccessfulResponse<TagsAmountResponse>>(`/tags`)).data
       .payload;
-  }
-
-  protected lookupBaseURL(): string {
-    return getEndpoint('API_TAG_SERVICE_URL');
   }
 }

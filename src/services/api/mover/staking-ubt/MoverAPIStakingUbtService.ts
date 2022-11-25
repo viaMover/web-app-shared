@@ -2,25 +2,22 @@ import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 
 import { dateFromExplicitPair } from '../../../../helpers/time';
-import { getEndpoint } from '../../../../references/endpoints';
 import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';
 import { StakingUbtInfo, StakingUbtReceipt } from './types';
 
 export class MoverAPIStakingUbtService extends MoverAPIService {
-  protected baseURL: string;
-
+  protected readonly baseURL: string;
   protected readonly client: AxiosInstance;
-
   protected readonly currentAddress: string;
 
-  constructor(currentAddress: string) {
+  constructor(baseURL: string, currentAddress: string) {
     super('staking-ubt.api.service');
-    this.baseURL = `${getEndpoint('API_VIEW_SERVICE_URL')}/v1/ubtstaking`;
+    this.baseURL = baseURL;
     this.currentAddress = currentAddress;
     this.client = this.applyAxiosInterceptors(
       axios.create({
-        baseURL: this.baseURL
+        baseURL: `${this.baseURL}/v1/ubtstaking`
       })
     );
   }

@@ -2,7 +2,6 @@ import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
 
 import { dateFromExplicitPair } from '../../../../helpers/time';
-import { getEndpoint } from '../../../../references/endpoints';
 import { Network } from '../../../../references/network';
 import { getNetwork } from '../../../../references/references';
 import { EECode, ExpectedError } from '../../../ExpectedError';
@@ -21,26 +20,26 @@ import {
 } from './types';
 
 export class MoverAPISavingsPlusService extends MoverAPIService {
-  protected baseURL: string;
-
+  protected serviceBaseURL: string;
+  protected viewServiceBaseURL: string;
   protected readonly client: AxiosInstance;
-
   protected readonly apiviewClient: AxiosInstance;
-
   protected readonly currentAddress: string;
 
-  constructor(currentAddress: string) {
+  constructor(serviceBaseURL: string, viewServiceBaseURL: string, currentAddress: string) {
     super('savings-plus.api.service');
-    this.baseURL = `${getEndpoint('API_SERVICE_URL')}/v1/savingsplus`;
+    this.serviceBaseURL = serviceBaseURL;
+    this.viewServiceBaseURL = viewServiceBaseURL;
     this.currentAddress = currentAddress;
+
     this.client = this.applyAxiosInterceptors(
       axios.create({
-        baseURL: this.baseURL
+        baseURL: `${this.serviceBaseURL}/v1/savingsplus`
       })
     );
     this.apiviewClient = this.applyAxiosInterceptors(
       axios.create({
-        baseURL: `${getEndpoint('API_VIEW_SERVICE_URL')}/v1/savingsplus`
+        baseURL: `${this.viewServiceBaseURL}/v1/savingsplus`
       })
     );
   }

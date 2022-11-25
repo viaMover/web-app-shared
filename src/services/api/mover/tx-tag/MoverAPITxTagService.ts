@@ -3,7 +3,6 @@ import dayjs from 'dayjs';
 import Web3 from 'web3';
 
 import { addSentryBreadcrumb } from '../../../../logs/sentry';
-import { getEndpoint } from '../../../../references/endpoints';
 import { getNetworkByChainId } from '../../../../references/references';
 import { EECode, ExpectedError } from '../../../ExpectedError';
 import { MoverError } from '../../../MoverError';
@@ -19,13 +18,12 @@ import {
 } from './types';
 
 export class MoverAPITxTagService extends MoverAPIService {
-  protected baseURL: string;
-
+  protected readonly baseURL: string;
   protected readonly client: AxiosInstance;
 
-  constructor() {
+  constructor(baseURL: string) {
     super('tx-tag.api.service');
-    this.baseURL = this.lookupBaseURL();
+    this.baseURL = baseURL;
     this.client = this.applyAxiosInterceptors(
       axios.create({
         baseURL: this.baseURL
@@ -178,9 +176,5 @@ export class MoverAPITxTagService extends MoverAPIService {
     }
 
     super.formatError(error);
-  }
-
-  protected lookupBaseURL(): string {
-    return getEndpoint('API_VIEW_SERVICE_URL');
   }
 }

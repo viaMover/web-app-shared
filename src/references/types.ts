@@ -1,4 +1,5 @@
 import { BridgeType } from './bridge';
+import { APIKeys } from './keys';
 import { Network } from './network';
 import { Token } from './tokens';
 
@@ -53,7 +54,7 @@ export type NetworkInfo = {
   explorer: string;
   subsidizedUrl?: string;
   baseAsset: Token;
-  rpcUrl: string[];
+  rpcUrl: (apiKeys?: Partial<APIKeys>) => string[];
   iconURL: string;
   displayedName: string;
 };

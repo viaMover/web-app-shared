@@ -1,4 +1,3 @@
-import { getAPIKey } from './keys';
 import { Network } from './network';
 import { NetworkInfoMap } from './types';
 
@@ -30,8 +29,8 @@ export const networks: NetworkInfoMap = {
         'https://github.com/trustwallet/assets/raw/master/blockchains/ethereum/info/logo.png',
       network: Network.ethereum
     },
-    rpcUrl: [
-      `https://mainnet.infura.io/v3/${getAPIKey('INFURA_PROJECT_ID')}`,
+    rpcUrl: (apiKeys) => [
+      `https://mainnet.infura.io/v3/${apiKeys?.INFURA_PROJECT_ID}`,
       'https://api.mycryptoapi.com/eth',
       'https://cloudflare-eth.com'
     ],
@@ -53,7 +52,7 @@ export const networks: NetworkInfoMap = {
       iconURL: 'https://github.com/trustwallet/assets/raw/master/blockchains/polygon/info/logo.png',
       network: Network.polygon
     },
-    rpcUrl: [`https://polygon-rpc.com/`],
+    rpcUrl: () => [`https://polygon-rpc.com/`],
     displayedName: 'Polygon'
   },
   [Network.binance]: {
@@ -73,7 +72,7 @@ export const networks: NetworkInfoMap = {
         'https://github.com/trustwallet/assets/raw/master/blockchains/smartchain/info/logo.png',
       network: Network.binance
     },
-    rpcUrl: [
+    rpcUrl: () => [
       'https://bsc-dataseed1.binance.org',
       'https://bsc-dataseed2.binance.org',
       'https://bsc-dataseed3.binance.org',
@@ -107,7 +106,7 @@ export const networks: NetworkInfoMap = {
         'https://github.com/trustwallet/assets/raw/master/blockchains/avalanchec/info/logo.png',
       network: Network.avalanche
     },
-    rpcUrl: ['https://api.avax.network/ext/bc/C/rpc'],
+    rpcUrl: () => ['https://api.avax.network/ext/bc/C/rpc'],
     displayedName: 'Avalanche'
   },
   [Network.arbitrum]: {
@@ -127,7 +126,7 @@ export const networks: NetworkInfoMap = {
         'https://github.com/trustwallet/assets/raw/master/blockchains/arbitrum/info/logo.png',
       network: Network.arbitrum
     },
-    rpcUrl: ['https://arb1.arbitrum.io/rpc'],
+    rpcUrl: () => ['https://arb1.arbitrum.io/rpc'],
     displayedName: 'Arbitrum'
   },
   [Network.fantom]: {
@@ -146,7 +145,7 @@ export const networks: NetworkInfoMap = {
       iconURL: 'https://github.com/trustwallet/assets/raw/master/blockchains/fantom/info/logo.png',
       network: Network.fantom
     },
-    rpcUrl: ['https://rpc.ftm.tools/'],
+    rpcUrl: () => ['https://rpc.ftm.tools/'],
     displayedName: 'Fantom'
   },
   [Network.optimism]: {
@@ -166,7 +165,7 @@ export const networks: NetworkInfoMap = {
         'https://github.com/trustwallet/assets/raw/master/blockchains/optimism/info/logo.png',
       network: Network.optimism
     },
-    rpcUrl: ['https://rpc.ankr.com/optimism'],
+    rpcUrl: () => ['https://rpc.ankr.com/optimism'],
     displayedName: 'Optimism'
   }
 };

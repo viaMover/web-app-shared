@@ -1,12 +1,11 @@
 import axios, { AxiosInstance } from 'axios';
 
 import { addSentryBreadcrumb } from '../../../../logs/sentry';
-import { getEndpoint } from '../../../../references/endpoints';
 import { Network } from '../../../../references/network';
 import { getNetwork } from '../../../../references/references';
-import { GetApprovalAPIResponse, GetApprovalReturn } from '../../../api/mover/approval/types';
 import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';
+import { GetApprovalAPIResponse, GetApprovalReturn } from './types';
 
 export class MoverAPIApprovalService extends MoverAPIService {
   protected readonly baseURL: string;
@@ -14,9 +13,9 @@ export class MoverAPIApprovalService extends MoverAPIService {
 
   protected readonly client: AxiosInstance;
 
-  constructor() {
+  constructor(baseURL: string) {
     super('permit.api.service');
-    this.baseURL = this.lookupBaseURL();
+    this.baseURL = baseURL;
     this.client = this.applyAxiosInterceptors(axios.create({ baseURL: this.baseURL }));
   }
 
@@ -58,9 +57,5 @@ export class MoverAPIApprovalService extends MoverAPIService {
       data: data.sig.replace('0x', ''),
       timestamp: data.timestamp
     };
-  }
-
-  protected lookupBaseURL(): string {
-    return getEndpoint('API_VIEW_SERVICE_URL');
   }
 }

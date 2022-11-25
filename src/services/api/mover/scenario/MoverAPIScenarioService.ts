@@ -2,7 +2,6 @@ import axios, { AxiosInstance } from 'axios';
 
 import { mapScenarioDataToPreusoUniqueId } from '../../../../helpers/scenarios';
 import { addSentryBreadcrumb } from '../../../../logs/sentry';
-import { getEndpoint } from '../../../../references/endpoints';
 import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';
 import {
@@ -13,13 +12,16 @@ import {
 } from './types';
 
 export class MoverAPIScenarioService extends MoverAPIService {
-  protected baseURL: string;
-
+  protected readonly baseURL: string;
   protected readonly client: AxiosInstance;
+  private readonly address: string;
+  private readonly signature: string;
 
-  constructor(private readonly address: string, private readonly signature: string) {
+  constructor(baseURL: string, address: string, signature: string) {
     super('tag.api.scenario');
-    this.baseURL = this.lookupBaseURL();
+    this.baseURL = baseURL;
+    this.address = address;
+    this.signature = signature;
     this.client = this.applyAxiosInterceptors(
       axios.create({
         baseURL: this.baseURL
@@ -120,9 +122,5 @@ export class MoverAPIScenarioService extends MoverAPIService {
         'Fallback-scenario-amount'
       );
     }
-  }
-
-  protected lookupBaseURL(): string {
-    return getEndpoint('API_ASSETS_SERVICE_URL');
   }
 }

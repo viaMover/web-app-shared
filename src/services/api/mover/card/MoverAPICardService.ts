@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { getEndpoint } from '../../../../references/endpoints';
 import { MoverAPIError } from '../MoverAPIError';
 import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';
@@ -14,13 +13,15 @@ import {
 } from './types';
 
 export class MoverAPICardService extends MoverAPIService {
+  protected readonly baseURL: string;
   protected readonly client: AxiosInstance;
 
-  constructor() {
+  constructor(baseURL: string) {
     super('card.api.service');
+    this.baseURL = baseURL;
     this.client = this.applyAxiosInterceptors(
       axios.create({
-        baseURL: `${getEndpoint('API_VIEW_SERVICE_URL')}/v2/cards`
+        baseURL: `${this.baseURL}/v2/cards`
       })
     );
   }

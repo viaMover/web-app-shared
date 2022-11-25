@@ -1,6 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
 
-import { getEndpoint } from '../../../../references/endpoints';
 import { Network } from '../../../../references/network';
 import { MoverError } from '../../../MoverError';
 import { Service } from '../../../Service';
@@ -12,12 +11,13 @@ import { AcrossFeeResponse } from './types';
  */
 export class AcrossAPIService extends Service {
   // we have proxy route for Across on our assets service
-  protected baseURL = getEndpoint('API_ASSETS_SERVICE_URL');
+  protected readonly baseURL: string;
   protected readonly client: AxiosInstance;
   protected readonly feeForSmallAmount = '495000000000000000';
 
-  constructor() {
+  constructor(baseURL: string) {
     super('across.api.service');
+    this.baseURL = baseURL;
     this.client = axios.create({
       baseURL: this.baseURL,
       headers: {

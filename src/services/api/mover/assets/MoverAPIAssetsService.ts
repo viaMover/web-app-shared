@@ -8,7 +8,6 @@ import {
   getUBTAssetData,
   getUSDCAssetData
 } from '../../../../references/assets';
-import { getEndpoint } from '../../../../references/endpoints';
 import { Network } from '../../../../references/network';
 import { PermitData, Token } from '../../../../references/tokens';
 import { MoverAPIService } from '../MoverAPIService';
@@ -32,16 +31,13 @@ import {
 } from './types';
 
 export class MoverAssetsService extends MoverAPIService {
-  protected readonly client: AxiosInstance;
-
   protected readonly baseURL: string;
-
+  protected readonly client: AxiosInstance;
   protected tokensCache = new Map<Network, Array<Token>>();
 
-  constructor() {
+  constructor(baseURL: string) {
     super('assets.service');
-    this.baseURL = getEndpoint('API_ASSETS_SERVICE_URL');
-
+    this.baseURL = baseURL;
     this.client = this.applyAxiosInterceptors(axios.create({ baseURL: this.baseURL }));
   }
 
