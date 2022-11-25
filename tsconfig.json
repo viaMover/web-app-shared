@@ -16,7 +16,7 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "lib",
-    "sourceRoot": "src",
+    "sourceRoot": "../src",
     "noEmitOnError": false
   },
   "include": [
