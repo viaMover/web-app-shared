@@ -5,20 +5,6 @@ import { networks } from './networks';
 import { ConstantsMap } from './types';
 
 export const DefaultSlippage = '10';
-export const AppName = 'ViaMover';
-
-export const MAX_ASSET_NAME_LENGTH = 30;
-export const MIN_TRANSACTION_LIST_UPDATE_RATE = 3 * 1000; // 3 sec
-export const TRANSACTION_LIST_PENDING_UPDATE_INTERVAL = 5 * 1000; // 5 sec
-export const TRANSACTION_WATCH_VIEW_UPDATE_INTERVAL = 1000; // 1 sec
-export const MIN_TOKENS_UPDATE_RATE = 5 * 1000; // 5 sec
-export const IDLE_TIMEOUT = 5 * 60 * 1000; // 5 min
-export const GLOBAL_UPDATE_RATE = 60 * 1000; // 1 min
-export const RESULT_LAYOUT_ANIMATION_DELAY = 300;
-export const HEADER_TRANSFORM_DINSTANCE_DESKTOP = 200;
-export const HEADER_TRANSFORM_DINSTANCE_MOBILE = 184;
-export const TOASTS_TRANSLATE_IN_PX = 8;
-export const TOASTS_TIMEOUT = 10 * 1000;
 
 export const networkConstants = {
   [Network.ethereum]: {
