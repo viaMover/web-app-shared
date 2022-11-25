@@ -87,24 +87,19 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
   private readonly useMockEstimation = true;
 
-  protected readonly swapService: SwapAPIService;
-  protected readonly assetsService: MoverAssetsService;
-  protected readonly acrossService: AcrossAPIService;
-
   constructor(
     currentAddress: string,
     network: Network,
     web3Client: Web3,
     protected readonly getWalletTokens: () => Array<TokenWithPrice>,
-    protected readonly moverAssetService: MoverAssetsService,
+    protected readonly swapService: SwapAPIService,
+    protected readonly acrossService: AcrossAPIService,
+    protected readonly assetsService: MoverAssetsService,
     protected readonly permitService: PermitOnChainService,
     protected readonly approvalService: MoverAPIApprovalService,
     protected readonly proofService: ProveOnChainService
   ) {
     super('debit-card.on-chain.service', currentAddress, network, web3Client);
-    this.swapService = new SwapAPIService(currentAddress, network);
-    this.assetsService = new MoverAssetsService();
-    this.acrossService = new AcrossAPIService();
     this.usdcAssetData = getUSDCAssetData(network);
     this.centralTransferProxyAddress = getNetworkAddress(network, 'TRANSFER_PROXY_ADDRESS');
     this.centralTransferProxyContract = this.createContract(
@@ -214,7 +209,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       });
 
       const unwrappedTokenData = specialTokenHandler.getUnwrappedToken();
-      const unwrappedTokenPermitData = await this.moverAssetService.getPermitData(
+      const unwrappedTokenPermitData = await this.assetsService.getPermitData(
         unwrappedTokenData.address,
         inputAsset.network
       );
@@ -469,7 +464,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
         //
 
         const unwrappedTokenData = specialTokenHandler.getUnwrappedToken();
-        const unwrappedTokenPermitData = await this.moverAssetService.getPermitData(
+        const unwrappedTokenPermitData = await this.assetsService.getPermitData(
           unwrappedTokenData.address,
           inputNetwork
         );

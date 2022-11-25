@@ -4,17 +4,13 @@ import Web3 from 'web3';
 import { getUSDCAssetData } from '../references/assets';
 import { Network } from '../references/network';
 import { SmallTokenInfo } from '../references/tokens';
-import { MoverAPIApprovalService } from '../services/api/mover/approval/MoverAPIApprovalService';
-import { MoverAssetsService } from '../services/api/mover/assets/MoverAPIAssetsService';
 import { DepositExecution, WithdrawExecution } from '../services/api/mover/savings-plus/types';
 import { Status, Transaction, TransactionType } from '../services/api/mover/transactions/types';
 import { MoverError } from '../services/MoverError';
 import { DebitCardOnChainService } from '../services/onchain/mover/debit-card/DebitCardOnChainService';
-import { ProveOnChainService } from '../services/onchain/mover/prove-txn/ProveOnChainService';
 import { SavingsPlusOnChainService } from '../services/onchain/mover/savings-plus/SavingsPlusOnChainService';
 import { SmartTreasuryOnChainService } from '../services/onchain/mover/smart-treasury/SmartTreasuryOnChainService';
 import { StakingUbtOnChainService } from '../services/onchain/mover/staking-ubt/StakingUbtOnChainService';
-import { PermitOnChainService } from '../services/onchain/permit/PermitOnChainService';
 import {
   InternalTransactionType,
   State,
@@ -38,11 +34,15 @@ const getFinalTypeByTxType = (txType: TransactionType): InternalTransactionType 
   }
 };
 
-const debitCardOnChainServicesMap = new Map<Network, DebitCardOnChainService>();
+interface ServiceFactory {
+  getSmartTreasuryOnChainService: (network: Network) => SmartTreasuryOnChainService;
+  getSavingsPlusOnChainService: (network: Network) => SavingsPlusOnChainService;
+  getDebitCardOnChainService: (network: Network) => DebitCardOnChainService;
+  getStakingOnChainService: (network: Network) => StakingUbtOnChainService;
+}
 export const getScenarioByTransaction = (
   tx: Transaction,
-  accountAddress: string,
-  web3Client: Web3
+  factory: ServiceFactory
 ): Promise<TransactionScenario | undefined> => {
   if (tx.status === Status.Succeeded || tx.status === Status.Failed) {
     return Promise.resolve({
@@ -69,69 +69,39 @@ export const getScenarioByTransaction = (
   }
   switch (tx.internalType) {
     case TransactionType.TreasuryDeposit: {
-      return new SmartTreasuryOnChainService(
-        accountAddress,
-        tx.network,
-        web3Client
-      ).explainDepositCompound(tx.token, tx.amount);
+      return factory
+        .getSmartTreasuryOnChainService(tx.network)
+        .explainDepositCompound(tx.token, tx.amount);
     }
     case TransactionType.TreasuryWithdraw: {
-      return new SmartTreasuryOnChainService(
-        accountAddress,
-        tx.network,
-        web3Client
-      ).explainWithdrawCompound(tx.token);
+      return factory.getSmartTreasuryOnChainService(tx.network).explainWithdrawCompound(tx.token);
     }
     case TransactionType.CardTopUp: {
-      const savedService = debitCardOnChainServicesMap.get(tx.network);
-      if (savedService === undefined) {
-        const service = new DebitCardOnChainService(
-          accountAddress,
-          tx.network,
-          web3Client,
-          () => [],
-          new MoverAssetsService(),
-          new PermitOnChainService(accountAddress, tx.network, web3Client),
-          new MoverAPIApprovalService(),
-          new ProveOnChainService(accountAddress, tx.network, web3Client)
-        );
-        debitCardOnChainServicesMap.set(tx.network, service);
-        return service.explainTopUpCompound({ ...tx.token, hasPermit: false }); // TODO permit data
-      }
-
-      return savedService.explainTopUpCompound({ ...tx.token, hasPermit: false }); // TODO permit data
+      return factory
+        .getDebitCardOnChainService(tx.network)
+        .explainTopUpCompound({ ...tx.token, hasPermit: false }); // TODO permit data
     }
     case TransactionType.SavingsPlusDeposit: {
       const depositData =
         tx.network !== Network.polygon ? DepositExecution.Bridged : DepositExecution.Direct;
-      return new SavingsPlusOnChainService(
-        accountAddress,
-        tx.network,
-        web3Client
-      ).explainDepositCompound(tx.token, getUSDCAssetData(tx.network), tx.amount, depositData);
+      return factory
+        .getSavingsPlusOnChainService(tx.network)
+        .explainDepositCompound(tx.token, getUSDCAssetData(tx.network), tx.amount, depositData);
     }
     case TransactionType.SavingsPlusWithdraw: {
       const withdrawData =
         tx.network !== Network.polygon ? WithdrawExecution.Bridged : WithdrawExecution.Direct;
-      return new SavingsPlusOnChainService(
-        accountAddress,
-        tx.network,
-        web3Client
-      ).explainWithdrawCompound(tx.token, tx.network, withdrawData);
+      return factory
+        .getSavingsPlusOnChainService(tx.network)
+        .explainWithdrawCompound(tx.token, tx.network, withdrawData);
     }
     case TransactionType.StakingDeposit: {
-      return new StakingUbtOnChainService(
-        accountAddress,
-        tx.network,
-        web3Client
-      ).explainDepositCompound(tx.token, tx.amount);
+      return factory
+        .getStakingOnChainService(tx.network)
+        .explainDepositCompound(tx.token, tx.amount);
     }
     case TransactionType.StakingWithdraw: {
-      return new StakingUbtOnChainService(
-        accountAddress,
-        tx.network,
-        web3Client
-      ).explainWithdrawCompound(tx.token);
+      return factory.getStakingOnChainService(tx.network).explainWithdrawCompound(tx.token);
     }
     default:
       return Promise.resolve(undefined);

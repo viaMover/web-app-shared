@@ -12,7 +12,7 @@ import {
 
 export class MoverAPICardServiceMock extends MoverAPICardService {
   constructor() {
-    super();
+    super('');
   }
 
   public async getInfoLegacy(
