@@ -44,7 +44,7 @@ export abstract class OnChainService extends PromiEventWrapper {
     this.web3Client = web3Client;
   }
 
-  public setAddMemPoolTxHandler(handler: IMemPoolTxAdder): OnChainService {
+  public setAddMemPoolTxHandler(handler: IMemPoolTxAdder): this {
     this.addMemPoolTxHandler = handler;
     return this;
   }
