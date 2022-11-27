@@ -6,9 +6,15 @@
   "author": "Andrew Gergert <axedrew33@gmail.com>",
   "license": "MIT",
   "private": true,
+  "directories": {
+    "lib": "./lib"
+  },
   "scripts": {
-    "postinstall": "tsc --project tsconfig.json",
+    "install": "tsc --project tsconfig.json",
     "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "typescript": "~4.5.5"
   },
   "devDependencies": {
     "@1inch/permit-signed-approvals-utils": "^1.4.7",
