@@ -1,17 +1,19 @@
 {
   "name": "web-app-shared",
-  "version": "1.0.0",
-  "description": "Mover web app services",
+  "version": "1.0.1",
+  "description": "Mover web app shared libraries",
   "repository": "https://github.com/viaMover/web-app-services",
   "author": "Andrew Gergert <axedrew33@gmail.com>",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "private": true,
   "directories": {
     "lib": "./lib"
   },
   "scripts": {
     "install": "tsc --project tsconfig.json",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "prepare": "husky install",
+    "build:noemit": "tsc --project tsconfig.json --noemit"
   },
   "dependencies": {
     "typescript": "~4.5.5"
@@ -36,6 +38,7 @@
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-simple-import-sort": "^7.0.0",
+    "husky": "^8.0.2",
     "merkle-patricia-tree": "^4.2.4",
     "prettier": "^2.7.1",
     "qs": "^6.11.0",
