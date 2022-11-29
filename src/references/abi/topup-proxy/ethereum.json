@@ -693,7 +693,7 @@
             "type": "bytes32"
           }
         ],
-        "internalType": "struct HardenedTopupProxy.SignedTransaction",
+        "internalType": "struct HardenedTopupProxyL1.SignedTransaction",
         "name": "t",
         "type": "tuple"
       }
@@ -727,16 +727,6 @@
       {
         "internalType": "bytes",
         "name": "_convertData",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_bridgeType",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_bridgeTxData",
         "type": "bytes"
       },
       {
@@ -784,16 +774,6 @@
         "type": "bytes"
       },
       {
-        "internalType": "uint256",
-        "name": "_bridgeType",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_bridgeTxData",
-        "type": "bytes"
-      },
-      {
         "internalType": "bytes32",
         "name": "_receiverHash",
         "type": "bytes32"
@@ -834,16 +814,6 @@
       {
         "internalType": "bytes",
         "name": "_convertData",
-        "type": "bytes"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_bridgeType",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_bridgeTxData",
         "type": "bytes"
       },
       {

@@ -69,8 +69,8 @@ import { WrappedTokenWXBTRFLY } from '../../wrapped-tokens/wxBTRFLY/token';
 import { WrappedTokenYearn } from '../../wrapped-tokens/yearn/token';
 import { MoverOnChainService } from '../MoverOnChainService';
 import { ProveOnChainService } from '../prove-txn/ProveOnChainService';
-import { TopUpProxyContract, TransferProxyContract } from '../types';
-import { BridgeDataResponse } from './types';
+import { TransferProxyContract } from '../types';
+import { BridgeDataResponse, TopUpProxyContract } from './types';
 
 export class DebitCardOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'debit-card.on-chain.service';
@@ -503,7 +503,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
         const bridgeDataResp = await this.getBridgeData(bridgeType, amountForBridge);
         bridgeData = bridgeDataResp.BridgeData;
 
-        let usdcSent = '0';
+        let usdcSent: string;
         if (transferData === undefined) {
           usdcSent = toWei(inputAmount, this.usdcAssetData.decimals);
         } else {
@@ -912,22 +912,42 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     try {
-      const gasLimitObj = await this.topUpProxyContract.methods
-        .CardTopupMPTProof(
-          this.substituteAssetAddressIfNeeded(inputAsset.address),
-          toWei(inputAmount, inputAsset.decimals),
-          blockNumber,
-          Buffer.from(proof, 'hex'),
-          this.mapTransferDataToExpectedMinimumAmount(transferData),
-          this.mapTransferDataToBytes(transferData),
-          mapBrideTypeToContractsConstant(bridgeType),
-          bridgeData,
-          receiverHash
-        )
-        .estimateGas({
-          from: this.currentAddress,
-          value: this.mapTransferDataToValue(transferData)
-        });
+      let gasLimitObj;
+      if (inputAsset.network === Network.ethereum) {
+        // use ethereum version
+        gasLimitObj = await this.topUpProxyContract.methods
+          .CardTopupMPTProof(
+            this.substituteAssetAddressIfNeeded(inputAsset.address),
+            toWei(inputAmount, inputAsset.decimals),
+            blockNumber,
+            Buffer.from(proof, 'hex'),
+            this.mapTransferDataToExpectedMinimumAmount(transferData),
+            this.mapTransferDataToBytes(transferData),
+            receiverHash
+          )
+          .estimateGas({
+            from: this.currentAddress,
+            value: this.mapTransferDataToValue(transferData)
+          });
+      } else {
+        // use l2 version
+        gasLimitObj = await this.topUpProxyContract.methods
+          .CardTopupMPTProof(
+            this.substituteAssetAddressIfNeeded(inputAsset.address),
+            toWei(inputAmount, inputAsset.decimals),
+            blockNumber,
+            Buffer.from(proof, 'hex'),
+            this.mapTransferDataToExpectedMinimumAmount(transferData),
+            this.mapTransferDataToBytes(transferData),
+            mapBrideTypeToContractsConstant(bridgeType),
+            bridgeData,
+            receiverHash
+          )
+          .estimateGas({
+            from: this.currentAddress,
+            value: this.mapTransferDataToValue(transferData)
+          });
+      }
 
       return this.addGasBuffer(gasLimitObj.toString());
     } catch (error) {
@@ -993,22 +1013,37 @@ export class DebitCardOnChainService extends MoverOnChainService {
         throw new NetworkFeatureNotSupportedError('Card Top Up with proof', this.network);
       }
 
+      let contractMethodToCall;
+      if (inputAsset.network === Network.ethereum) {
+        // use ethereum version
+        contractMethodToCall = this.topUpProxyContract.methods.CardTopupMPTProof(
+          this.substituteAssetAddressIfNeeded(inputAsset.address),
+          toWei(inputAmount, inputAsset.decimals),
+          blockNumber,
+          Buffer.from(proof, 'hex'),
+          this.mapTransferDataToExpectedMinimumAmount(transferData),
+          this.mapTransferDataToBytes(transferData),
+          receiverHash
+        );
+      } else {
+        // use l2 version
+        contractMethodToCall = this.topUpProxyContract.methods.CardTopupMPTProof(
+          this.substituteAssetAddressIfNeeded(inputAsset.address),
+          toWei(inputAmount, inputAsset.decimals),
+          blockNumber,
+          Buffer.from(proof, 'hex'),
+          this.mapTransferDataToExpectedMinimumAmount(transferData),
+          this.mapTransferDataToBytes(transferData),
+          mapBrideTypeToContractsConstant(bridgeType),
+          bridgeData,
+          receiverHash
+        );
+      }
+
       this.wrapWithSendMethodCallbacks(
-        this.topUpProxyContract.methods
-          .CardTopupMPTProof(
-            this.substituteAssetAddressIfNeeded(inputAsset.address),
-            toWei(inputAmount, inputAsset.decimals),
-            blockNumber,
-            Buffer.from(proof, 'hex'),
-            this.mapTransferDataToExpectedMinimumAmount(transferData),
-            this.mapTransferDataToBytes(transferData),
-            mapBrideTypeToContractsConstant(bridgeType),
-            bridgeData,
-            receiverHash
-          )
-          .send(
-            this.getDefaultTransactionsParams(gasLimit, this.mapTransferDataToValue(transferData))
-          ),
+        contractMethodToCall.send(
+          this.getDefaultTransactionsParams(gasLimit, this.mapTransferDataToValue(transferData))
+        ),
         (receipt) => {
           if (!sameAddress(getUSDCAssetData(this.network).address, inputAsset.address)) {
             eb.emit({ type: InternalTransactionType.Swap, state: State.Succeeded });
@@ -1082,22 +1117,41 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     try {
-      const gasLimitObj = await this.topUpProxyContract.methods
-        .CardTopupTrusted(
-          this.substituteAssetAddressIfNeeded(inputAsset.address),
-          toWei(inputAmount, inputAsset.decimals),
-          timestamp,
-          Buffer.from(backendData, 'hex'),
-          this.mapTransferDataToExpectedMinimumAmount(transferData),
-          this.mapTransferDataToBytes(transferData),
-          mapBrideTypeToContractsConstant(bridgeType),
-          bridgeData,
-          receiverHash
-        )
-        .estimateGas({
-          from: this.currentAddress,
-          value: this.mapTransferDataToValue(transferData)
-        });
+      let gasLimitObj;
+      if (inputAsset.network === Network.ethereum) {
+        gasLimitObj = await this.topUpProxyContract.methods
+          .CardTopupTrusted(
+            this.substituteAssetAddressIfNeeded(inputAsset.address),
+            toWei(inputAmount, inputAsset.decimals),
+            timestamp,
+            Buffer.from(backendData, 'hex'),
+            this.mapTransferDataToExpectedMinimumAmount(transferData),
+            this.mapTransferDataToBytes(transferData),
+            receiverHash
+          )
+          .estimateGas({
+            from: this.currentAddress,
+            value: this.mapTransferDataToValue(transferData)
+          });
+      } else {
+        // use l2 version
+        gasLimitObj = await this.topUpProxyContract.methods
+          .CardTopupTrusted(
+            this.substituteAssetAddressIfNeeded(inputAsset.address),
+            toWei(inputAmount, inputAsset.decimals),
+            timestamp,
+            Buffer.from(backendData, 'hex'),
+            this.mapTransferDataToExpectedMinimumAmount(transferData),
+            this.mapTransferDataToBytes(transferData),
+            mapBrideTypeToContractsConstant(bridgeType),
+            bridgeData,
+            receiverHash
+          )
+          .estimateGas({
+            from: this.currentAddress,
+            value: this.mapTransferDataToValue(transferData)
+          });
+      }
 
       return this.addGasBuffer(gasLimitObj.toString());
     } catch (error) {
@@ -1163,22 +1217,37 @@ export class DebitCardOnChainService extends MoverOnChainService {
         throw new NetworkFeatureNotSupportedError('Card Top Up with trust', this.network);
       }
 
+      let contractMethodToCall;
+      if (inputAsset.network === Network.ethereum) {
+        // use ethereum version
+        contractMethodToCall = this.topUpProxyContract.methods.CardTopupTrusted(
+          this.substituteAssetAddressIfNeeded(inputAsset.address),
+          toWei(inputAmount, inputAsset.decimals),
+          timestamp,
+          Buffer.from(backendData, 'hex'),
+          this.mapTransferDataToExpectedMinimumAmount(transferData),
+          this.mapTransferDataToBytes(transferData),
+          receiverHash
+        );
+      } else {
+        // use l2 version
+        contractMethodToCall = this.topUpProxyContract.methods.CardTopupTrusted(
+          this.substituteAssetAddressIfNeeded(inputAsset.address),
+          toWei(inputAmount, inputAsset.decimals),
+          timestamp,
+          Buffer.from(backendData, 'hex'),
+          this.mapTransferDataToExpectedMinimumAmount(transferData),
+          this.mapTransferDataToBytes(transferData),
+          mapBrideTypeToContractsConstant(bridgeType),
+          bridgeData,
+          receiverHash
+        );
+      }
+
       this.wrapWithSendMethodCallbacks(
-        this.topUpProxyContract.methods
-          .CardTopupTrusted(
-            this.substituteAssetAddressIfNeeded(inputAsset.address),
-            toWei(inputAmount, inputAsset.decimals),
-            timestamp,
-            Buffer.from(backendData, 'hex'),
-            this.mapTransferDataToExpectedMinimumAmount(transferData),
-            this.mapTransferDataToBytes(transferData),
-            mapBrideTypeToContractsConstant(bridgeType),
-            bridgeData,
-            receiverHash
-          )
-          .send(
-            this.getDefaultTransactionsParams(gasLimit, this.mapTransferDataToValue(transferData))
-          ),
+        contractMethodToCall.send(
+          this.getDefaultTransactionsParams(gasLimit, this.mapTransferDataToValue(transferData))
+        ),
         (receipt) => {
           if (bridgeType !== BridgeType.None) {
             eb.emit({
@@ -1249,22 +1318,42 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     try {
-      const gasLimitObj = await this.topUpProxyContract.methods
-        .CardTopupPermit(
-          this.substituteAssetAddressIfNeeded(inputAsset.address),
-          toWei(inputAmount, inputAsset.decimals),
-          //this.web3Client.utils.hexToBytes(permitCallData),
-          Buffer.from(permitCallData, 'hex'),
-          this.mapTransferDataToExpectedMinimumAmount(transferData),
-          this.mapTransferDataToBytes(transferData),
-          mapBrideTypeToContractsConstant(bridgeType),
-          bridgeData,
-          receiverHash
-        )
-        .estimateGas({
-          from: this.currentAddress,
-          value: this.mapTransferDataToValue(transferData)
-        });
+      let gasLimitObj;
+      if (inputAsset.network === Network.ethereum) {
+        // use ethereum version
+        gasLimitObj = await this.topUpProxyContract.methods
+          .CardTopupPermit(
+            this.substituteAssetAddressIfNeeded(inputAsset.address),
+            toWei(inputAmount, inputAsset.decimals),
+            //this.web3Client.utils.hexToBytes(permitCallData),
+            Buffer.from(permitCallData, 'hex'),
+            this.mapTransferDataToExpectedMinimumAmount(transferData),
+            this.mapTransferDataToBytes(transferData),
+            receiverHash
+          )
+          .estimateGas({
+            from: this.currentAddress,
+            value: this.mapTransferDataToValue(transferData)
+          });
+      } else {
+        // use l2 contract version
+        gasLimitObj = await this.topUpProxyContract.methods
+          .CardTopupPermit(
+            this.substituteAssetAddressIfNeeded(inputAsset.address),
+            toWei(inputAmount, inputAsset.decimals),
+            //this.web3Client.utils.hexToBytes(permitCallData),
+            Buffer.from(permitCallData, 'hex'),
+            this.mapTransferDataToExpectedMinimumAmount(transferData),
+            this.mapTransferDataToBytes(transferData),
+            mapBrideTypeToContractsConstant(bridgeType),
+            bridgeData,
+            receiverHash
+          )
+          .estimateGas({
+            from: this.currentAddress,
+            value: this.mapTransferDataToValue(transferData)
+          });
+      }
 
       return this.addGasBuffer(gasLimitObj.toString());
     } catch (error) {
@@ -1328,21 +1417,34 @@ export class DebitCardOnChainService extends MoverOnChainService {
         throw new NetworkFeatureNotSupportedError('Card Top Up with permit', this.network);
       }
 
+      let contractMethodToCall;
+      if (inputAsset.network === Network.ethereum) {
+        // use ethereum version
+        contractMethodToCall = this.topUpProxyContract.methods.CardTopupPermit(
+          this.substituteAssetAddressIfNeeded(inputAsset.address),
+          toWei(inputAmount, inputAsset.decimals),
+          Buffer.from(permitCallData, 'hex'),
+          this.mapTransferDataToExpectedMinimumAmount(transferData),
+          this.mapTransferDataToBytes(transferData),
+          receiverHash
+        );
+      } else {
+        // use l2 version
+        contractMethodToCall = this.topUpProxyContract.methods.CardTopupPermit(
+          this.substituteAssetAddressIfNeeded(inputAsset.address),
+          toWei(inputAmount, inputAsset.decimals),
+          Buffer.from(permitCallData, 'hex'),
+          this.mapTransferDataToExpectedMinimumAmount(transferData),
+          this.mapTransferDataToBytes(transferData),
+          mapBrideTypeToContractsConstant(bridgeType),
+          bridgeData,
+          receiverHash
+        );
+      }
       this.wrapWithSendMethodCallbacks(
-        this.topUpProxyContract.methods
-          .CardTopupPermit(
-            this.substituteAssetAddressIfNeeded(inputAsset.address),
-            toWei(inputAmount, inputAsset.decimals),
-            Buffer.from(permitCallData, 'hex'),
-            this.mapTransferDataToExpectedMinimumAmount(transferData),
-            this.mapTransferDataToBytes(transferData),
-            mapBrideTypeToContractsConstant(bridgeType),
-            bridgeData,
-            receiverHash
-          )
-          .send(
-            this.getDefaultTransactionsParams(gasLimit, this.mapTransferDataToValue(transferData))
-          ),
+        contractMethodToCall.send(
+          this.getDefaultTransactionsParams(gasLimit, this.mapTransferDataToValue(transferData))
+        ),
         (receipt) => {
           if (!sameAddress(getUSDCAssetData(this.network).address, inputAsset.address)) {
             eb.emit({ type: InternalTransactionType.Swap, state: State.Succeeded });

@@ -56,38 +56,3 @@ export type TransferProxyContract = CustomContractType<{
     _bytesData: number[]
   ): ContractMethod;
 }>;
-
-export type TopUpProxyContract = CustomContractType<{
-  CardTopupPermit(
-    _inputCurrencyAddress: string,
-    _inputAmountInWEI: string,
-    _permitCallData: Buffer,
-    _expectedMinimumReceived: string,
-    _convertData: number[],
-    _bridgeType: number,
-    _bridgeTxData: Buffer,
-    _receiverHash: Buffer
-  ): ContractMethod;
-  CardTopupMPTProof(
-    _inputCurrencyAddress: string,
-    _inputAmountInWEI: string,
-    _blockNumber: number,
-    _proofBlob: Buffer,
-    _expectedMinimumReceived: string,
-    _convertData: number[],
-    _bridgeType: number,
-    _bridgeTxData: Buffer,
-    _receiverHash: Buffer
-  ): ContractMethod;
-  CardTopupTrusted(
-    _inputCurrencyAddress: string,
-    _inputAmountInWEI: string,
-    _timestamp: number,
-    _signature: Buffer,
-    _expectedMinimumReceived: string,
-    _convertData: number[],
-    _bridgeType: number,
-    _bridgeTxData: Buffer,
-    _receiverHash: Buffer
-  ): ContractMethod;
-}>;
