@@ -1,12 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
 import dayjs from 'dayjs';
-import { UECode, UnexpectedError } from 'src/services/UnexpectedError';
 import Web3 from 'web3';
 
 import { addSentryBreadcrumb } from '../../../../logs/sentry';
 import { EECode, ExpectedError } from '../../../ExpectedError';
 import { MoverError } from '../../../MoverError';
 import { isRejectedRequestError } from '../../../onchain/ProviderRPCError';
+import { UECode, UnexpectedError } from '../../../UnexpectedError';
 import { MoverAPIError } from '../MoverAPIError';
 import { MoverAPIService } from '../MoverAPIService';
 import { MoverAPISuccessfulResponse } from '../types';
