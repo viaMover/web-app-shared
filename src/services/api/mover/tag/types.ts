@@ -23,6 +23,10 @@ export type LookupTagResponse = {
   position: number;
 };
 
+export type LookupAvatarResponse = {
+  avatarSrc: string | undefined;
+};
+
 export type SetAvatarResponse = {
   publicLink: string;
 };
@@ -37,7 +41,10 @@ export enum ErrorCode {
   TagAlreadyInUse = 'CONFLICT',
   TagValidationLengthTooBig = 'LENGTH_TOO_BIG',
   TagValidationLengthTooSmall = 'LENGTH_TOO_SMALL',
-  TagValidationContainsInvalidCharacters = 'CONTAINS_INVALID_CHARACTERS'
+  TagValidationContainsInvalidCharacters = 'CONTAINS_INVALID_CHARACTERS',
+  WrongCode = 'WRONG_CODE',
+  AlreadyHasCard = 'ALREADY_HAS_A_CARD',
+  NoCard = 'NO_CARD'
 }
 
 export type SaveEmailPayload = {
@@ -50,19 +57,49 @@ export type SaveEmailResponse = {
 
 export type TagAvailability = 'AVAILABLE' | 'INVALID' | 'ALREADY_IN_USE';
 
+export type ApprovedWalletsListItemType = 'approved_for_topup' | 'approved_for_control';
+export type ApprovedWalletsListItemStatus = 'approved' | 'not_approved' | 'rejected';
+
 export type ApprovedWalletsListItem = {
   address: string;
   addedAt: number;
+  type: ApprovedWalletsListItemType;
+  status: ApprovedWalletsListItemStatus;
 };
 export type ApprovedWalletsList = Array<ApprovedWalletsListItem>;
+
+export type IncomingControlEvent = {
+  cardUID: string;
+  cardLastNumbers: string;
+  address: string;
+};
+
+export type IncomingControlEventResponse = {
+  oldestRequest: IncomingControlEvent | undefined;
+};
+
+export type ApproveIncomingControlEventPayload = {
+  cardUID: string;
+  code: string;
+};
+
+export type DeclineIncomingControlEventPayload = {
+  cardUID: string;
+};
 
 export type ApprovedWalletsListResponse = Array<{
   address: string;
   tsCreated: number;
+  type: ApprovedWalletsListItemType;
+  status: ApprovedWalletsListItemStatus;
 }>;
 
 export type AddApprovedWalletReturn = {
   timestamp: number;
+};
+
+export type AddControlWalletReturn = {
+  code: string;
 };
 
 export type ResolveTagAPIResponse = {

@@ -115,7 +115,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       );
     } catch (e) {
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.constructor`,
         message: 'can not init hardenedTopUpProxyContract for this network',
         data: {
@@ -383,7 +383,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       );
     } catch (e) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: `${this.sentryCategoryPrefix}.getUnwrappedData`,
         message: 'can not get unwrapped token price, return zero',
         data: {
@@ -519,7 +519,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
         if (greaterThan(deltaFeeActual, '30')) {
           addSentryBreadcrumb({
-            type: 'error',
+            level: 'error',
             category: `${this.sentryCategoryPrefix}.topUpCompound`,
             message: 'actualFee is bigger than calculated before',
             data: {
@@ -532,7 +532,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
         }
       }
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.topUpCompound`,
         message: 'bridge data',
         data: {
@@ -557,7 +557,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
       if (inputAsset.hasPermit && inputAsset.permitType === 'erc2612') {
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: `${this.sentryCategoryPrefix}.topUpCompound`,
           message: 'Token has permit',
           data: {
@@ -623,7 +623,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       } else {
         // try to make request to backend
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: `${this.sentryCategoryPrefix}.topUpCompound`,
           message: 'Token has no permit - try to Top Up with trust',
           data: {
@@ -677,7 +677,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       );
       if (!isEqual(approvalData.amount, amountInWei)) {
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
           message: 'wrong approve amount',
           data: {
@@ -695,7 +695,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     } catch (err) {
       if (err instanceof MoverError && err.message === 'no matching approve tx for address') {
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
           message: 'no matching approve tx for address'
         });
@@ -707,7 +707,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
         };
       } else {
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
           message: 'Failed to get trust from backend',
           data: {
@@ -721,7 +721,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
     if (approvalData === undefined) {
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
         message: 'cant receive approval data from backend - try Top Up with proof'
       });
@@ -774,7 +774,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
     if (approvalData.approval === 'ok') {
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
         message: 'approval is correct, do Top Up with trust',
         data: {
@@ -798,7 +798,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       );
 
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
         message: 'estimated is correct',
         data: {
@@ -832,7 +832,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     } else {
       if (attemptNumber > 2) {
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
           message: 'approval is incorrect even in third try, raise error'
         });
@@ -840,7 +840,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
         throw new MoverError('backend cant see approval');
       } else if (attemptNumber === 1) {
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
           message: 'approval is incorrect, make approve'
         });
@@ -858,7 +858,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       }
 
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
         message: 'Waiting 10 sec'
       });
@@ -866,7 +866,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       await asyncSleep(10000);
 
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.tryTopUpWithBackend`,
         message: 'After wait lets check one more time'
       });
@@ -952,7 +952,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       return this.addGasBuffer(gasLimitObj.toString());
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: `${this.sentryCategoryPrefix}.estimateTopUpWithProof`,
         message: 'Failed to estimate top up with proof',
         data: {
@@ -992,7 +992,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.topUpWithProof`,
       message: 'Ready to call CardTopupMPTProof',
       data: {
@@ -1156,7 +1156,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       return this.addGasBuffer(gasLimitObj.toString());
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: `${this.sentryCategoryPrefix}.estimateTopUpWithTrust`,
         message: 'Failed to estimate top up with trust from server',
         data: {
@@ -1196,7 +1196,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.topUpWithTrust`,
       message: 'Ready to call CardTopupTrusted',
       data: {
@@ -1358,7 +1358,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       return this.addGasBuffer(gasLimitObj.toString());
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: `${this.sentryCategoryPrefix}.estimateTopUpWithPermit`,
         message: 'Failed to estimate top up with permit',
         data: {
@@ -1397,7 +1397,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.TopUpWithPermit`,
       message: 'Ready to call CardTopupPermit',
       data: {
@@ -1540,7 +1540,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       return await this.getTokenPrice(tokenAddress, this.network);
     } catch (err) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: `${this.sentryCategoryPrefix}.getPriceByAddress`,
         message: 'Failed to get token price from token price',
         data: {
@@ -1568,7 +1568,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
     if (specialTokenHandler !== undefined) {
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.estimateTopUpCompoundLegacy`,
         message: 'Special token',
         data: {
@@ -1582,7 +1582,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
         estimation = await specialTokenHandler.estimateUnwrap(inputAsset, inputAmount);
       } catch (error) {
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           category: `${this.sentryCategoryPrefix}.estimateTopUpCompoundLegacy`,
           message: 'failed to estimate unwrap',
           data: {
@@ -1644,7 +1644,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: `${this.sentryCategoryPrefix}.estimateTopUpCompoundLegacy`,
         message: 'Failed to estimate top up',
         data: {
@@ -1659,7 +1659,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       category: `${this.sentryCategoryPrefix}.estimateTopUpCompoundLegacy`,
       message: 'Failed to estimate top up: empty gas limit',
       data: {

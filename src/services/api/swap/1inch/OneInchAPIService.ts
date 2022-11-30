@@ -112,7 +112,7 @@ export class OneInchAPIService extends SingleNetworkService implements ISwapper 
         address = Web3.utils.toChecksumAddress(token.address, networkChainId);
       } catch (error) {
         addSentryBreadcrumb({
-          type: 'debug',
+          level: 'debug',
           message: 'Unable to convert address to checksum variant',
           data: {
             address: token.address,
@@ -164,7 +164,7 @@ export class OneInchAPIService extends SingleNetworkService implements ISwapper 
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'warning',
+        level: 'warning',
         category: this.sentryCategoryPrefix,
         message: 'Failed to format "swappingVia"',
         data: {
@@ -264,7 +264,7 @@ export class OneInchAPIService extends SingleNetworkService implements ISwapper 
       return availableTokensMap.has(tokenAddress);
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'warn',
+        level: 'warning',
         category: this.sentryCategoryPrefix,
         message: 'Failed to load available tokens. Consider token available for swap',
         data: {
@@ -285,7 +285,7 @@ export class OneInchAPIService extends SingleNetworkService implements ISwapper 
         // that falls out of the range of 2xx
         if (error.response.data === undefined) {
           addSentryBreadcrumb({
-            type: 'error',
+            level: 'error',
             message: 'API responded with an error',
             category: this.sentryCategoryPrefix,
             data: {
@@ -303,7 +303,7 @@ export class OneInchAPIService extends SingleNetworkService implements ISwapper 
         }
 
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
           data: {
@@ -316,7 +316,7 @@ export class OneInchAPIService extends SingleNetworkService implements ISwapper 
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
           data: {
@@ -330,7 +330,7 @@ export class OneInchAPIService extends SingleNetworkService implements ISwapper 
     }
 
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       message: 'API responded with an error',
       category: this.sentryCategoryPrefix,
       data: {
@@ -367,7 +367,7 @@ export class OneInchAPIService extends SingleNetworkService implements ISwapper 
 
   protected formatBadRequestResponse(response: AxiosResponse<OneInchBadRequestResponse>): never {
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       category: this.sentryCategoryPrefix,
       message: `Request failed with code ${response.status} (${response.statusText}): ${response.data.error}`,
       data: {

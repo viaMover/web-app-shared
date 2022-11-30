@@ -13,7 +13,9 @@ export enum EECode {
   withdrawUnsupportedNetwork = 'errors.withdrawUnsupportedNetwork',
   avatarSave = 'errors.avatarSave',
   avatarNotSelected = 'errors.avatarNotSelected',
-  avatarInvalidFormat = 'errors.avatarInvalidFormat'
+  avatarInvalidFormat = 'errors.avatarInvalidFormat',
+  wrongCodeForAddControlWallet = 'errors.wrongCode',
+  walletAlreadyHasCard = 'errors.walletAlreadyHasCard'
 }
 
 export class ExpectedError extends MoverError {

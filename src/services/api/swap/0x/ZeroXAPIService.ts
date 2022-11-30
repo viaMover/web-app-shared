@@ -139,7 +139,7 @@ export class ZeroXAPIService extends Service implements ISwapper {
         // that falls out of the range of 2xx
         if (error.response.data === undefined) {
           addSentryBreadcrumb({
-            type: 'error',
+            level: 'error',
             message: 'API responded with an error',
             category: this.sentryCategoryPrefix,
             data: {
@@ -157,7 +157,7 @@ export class ZeroXAPIService extends Service implements ISwapper {
         }
 
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
           data: {
@@ -170,7 +170,7 @@ export class ZeroXAPIService extends Service implements ISwapper {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
           data: {
@@ -184,7 +184,7 @@ export class ZeroXAPIService extends Service implements ISwapper {
     }
 
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       message: 'API responded with an error',
       category: this.sentryCategoryPrefix,
       data: {
@@ -234,7 +234,7 @@ export class ZeroXAPIService extends Service implements ISwapper {
 
   protected formatBadRequestResponse(response: AxiosResponse<ZeroXBadRequestResponse>): never {
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       category: this.sentryCategoryPrefix,
       message: `Request failed with code ${response.status} (${response.statusText}): ${response.data.reason}`,
       data: {

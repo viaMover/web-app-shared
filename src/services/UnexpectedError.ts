@@ -18,8 +18,10 @@ export enum UECode {
   ReserveTag = 'ReT',
   GetTagAmount = 'GT-A',
   CantAddApprovalWallet = 'CA-AW',
+  CantAddControlWallet = 'CA-CW',
   CantDeleteApprovalWallet = 'CD-AW',
   ApprovalWalletsLoading = 'AW-L',
+  CantApproveControlEvent = 'CA-CE',
   ErrorToInstanceOff = 'Err-Inst-Off',
   UnknownErrorType = 'P-TT-DEF',
   InitTransactionsEmptyAccount = 'IT-EA',
@@ -54,7 +56,8 @@ export enum UECode {
   CardTopUp = 'C-TU',
   CardTopUpAcceptError = 'C-TU-A',
   CardTopUpRejectError = 'C-TU-R',
-  EmptyConfirmationUponCachedInit = 'EmConf-CI'
+  EmptyConfirmationUponCachedInit = 'EmConf-CI',
+  NoCardFromTagService = 'NC-TS'
 }
 
 export class UnexpectedError extends MoverError {

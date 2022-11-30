@@ -67,7 +67,7 @@ export class MoverError extends CustomError {
 
   public addToBreadcrumb(): void {
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       category: 'mover.error',
       message: this.originalMessage,
       data: {

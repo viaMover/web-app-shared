@@ -47,7 +47,7 @@ export class MoverAPIScenarioService extends MoverAPIService {
   ): Promise<void> {
     if (uniqId === undefined) {
       addSentryBreadcrumb({
-        type: 'warning',
+        level: 'warning',
         category: this.sentryCategoryPrefix,
         message: 'Received uniqID of undefined'
       });
@@ -74,7 +74,7 @@ export class MoverAPIScenarioService extends MoverAPIService {
   ): Promise<void> {
     if (uniqId === undefined) {
       addSentryBreadcrumb({
-        type: 'warning',
+        level: 'warning',
         category: this.sentryCategoryPrefix,
         message: 'Received uniqID of undefined'
       });
@@ -107,7 +107,7 @@ export class MoverAPIScenarioService extends MoverAPIService {
       ).data.payload.transactionUID;
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'warning',
+        level: 'warning',
         category: this.sentryCategoryPrefix,
         message: 'Failed to create scenario data',
         data: {

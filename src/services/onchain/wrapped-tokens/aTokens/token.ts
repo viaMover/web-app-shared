@@ -76,7 +76,7 @@ export class WrappedTokenAToken extends WrappedToken {
       const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'input amount in WEI',
         data: {
@@ -88,7 +88,7 @@ export class WrappedTokenAToken extends WrappedToken {
       });
 
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'transaction params',
         data: {
@@ -105,7 +105,7 @@ export class WrappedTokenAToken extends WrappedToken {
         const gasLimitWithBuffer = floorDivide(multiply(gasLimit, '120'), '100');
 
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
           message: 'gas estimations',
           data: {
@@ -118,7 +118,7 @@ export class WrappedTokenAToken extends WrappedToken {
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
         message: 'failed to estimate top up',
         data: {
@@ -146,7 +146,7 @@ export class WrappedTokenAToken extends WrappedToken {
     );
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.execute-unwrap`,
       message: 'balanceBeforeUnwrap',
       data: {
@@ -168,7 +168,7 @@ export class WrappedTokenAToken extends WrappedToken {
     );
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.execute-unwrap`,
       message: 'balanceAfterUnwrap',
       data: {
@@ -200,7 +200,7 @@ export class WrappedTokenAToken extends WrappedToken {
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.execute-unwrap`,
       message: 'input amount in WEI',
       data: {
@@ -212,7 +212,7 @@ export class WrappedTokenAToken extends WrappedToken {
     });
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
       message: 'transaction params',
       data: {
@@ -221,7 +221,7 @@ export class WrappedTokenAToken extends WrappedToken {
     });
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.estimate-unwrap`,
       message: 'currency'
     });

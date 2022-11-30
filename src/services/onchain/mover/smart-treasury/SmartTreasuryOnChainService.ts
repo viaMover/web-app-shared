@@ -85,7 +85,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
       this.rethrowIfUserRejectedRequest(error);
 
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to deposit',
         data: {
@@ -214,7 +214,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit',
         data: {
@@ -230,7 +230,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       category: this.sentryCategoryPrefix,
       message: 'Failed to estimate deposit: empty gas limit',
       data: {
@@ -258,7 +258,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
       this.rethrowIfUserRejectedRequest(error);
 
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to withdraw',
         data: {
@@ -346,7 +346,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate withdraw',
         data: {
@@ -361,7 +361,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       category: this.sentryCategoryPrefix,
       message: 'Failed to estimate withdraw: empty gas limit',
       data: {

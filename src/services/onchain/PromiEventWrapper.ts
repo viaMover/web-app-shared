@@ -28,7 +28,7 @@ export abstract class PromiEventWrapper extends Service {
     return promiEvent
       .once('transactionHash', (hash: string) => {
         addSentryBreadcrumb({
-          type: 'debug',
+          level: 'debug',
           message: 'Received a transaction hash',
           data: {
             hash
@@ -38,7 +38,7 @@ export abstract class PromiEventWrapper extends Service {
       })
       .once('receipt', (receipt: TransactionReceipt) => {
         addSentryBreadcrumb({
-          type: 'debug',
+          level: 'debug',
           message: 'Received a transaction receipt',
           data: {
             receipt
@@ -48,7 +48,7 @@ export abstract class PromiEventWrapper extends Service {
       })
       .once('confirmation', (confirmationNumber, receipt, latestBlockHash) => {
         addSentryBreadcrumb({
-          type: 'debug',
+          level: 'debug',
           category: this.sentryCategoryPrefix,
           message: 'Transaction is confirmed',
           data: {
@@ -60,7 +60,7 @@ export abstract class PromiEventWrapper extends Service {
       })
       .once('error', (error) => {
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           category: this.sentryCategoryPrefix,
           message: 'On-chain call failed',
           data: {

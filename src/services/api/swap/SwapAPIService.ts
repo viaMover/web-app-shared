@@ -24,7 +24,7 @@ export class SwapAPIService {
     const executor = this.executors.find((s) => s.canHandle(this.network));
     if (executor === undefined) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to find suitable swap executor',
         data: { network: this.network }
@@ -45,7 +45,7 @@ export class SwapAPIService {
     const executor = this.executors.find((s) => s.canHandle(this.network));
     if (executor === undefined) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to find suitable swap executor',
         data: { network: this.network }
@@ -54,7 +54,7 @@ export class SwapAPIService {
     }
 
     addSentryBreadcrumb({
-      type: 'debug',
+      level: 'debug',
       category: this.sentryCategoryPrefix,
       message: 'Using concrete swap executor',
       data: { name: executor.getName() }

@@ -33,7 +33,7 @@ export class ProveOnChainService extends MoverOnChainService {
     txIndex: number
   ): Promise<Uint8Array> {
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: this.sentryCategoryPrefix,
       message: 'calcTransactionProof started',
       data: {
@@ -74,7 +74,7 @@ export class ProveOnChainService extends MoverOnChainService {
 
     const blockData = await this.web3Client.eth.getBlock(blockNumber, true);
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: this.sentryCategoryPrefix,
       message: 'Block data from web3',
       data: {
@@ -118,7 +118,7 @@ export class ProveOnChainService extends MoverOnChainService {
 
     if (Buffer.compare(header.transactionsTrie, rootHash) !== 0) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Tx trie root hash does not match',
         data: {
@@ -129,7 +129,7 @@ export class ProveOnChainService extends MoverOnChainService {
       throw new MoverError('Tx trie root hash is wrong');
     } else {
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: this.sentryCategoryPrefix,
         message: 'Tx trie root hash is correct',
         data: {
@@ -144,7 +144,7 @@ export class ProveOnChainService extends MoverOnChainService {
     const proofBlob = RLP.encode([proofType, header.raw(), txIndex, stack.map((n) => n.raw())]);
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: this.sentryCategoryPrefix,
       message: 'Calculated blob proof',
       data: {
@@ -176,7 +176,7 @@ export class ProveOnChainService extends MoverOnChainService {
     ): Promise<void> => {
       if (nodeHash === null) {
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: this.sentryCategoryPrefix,
           message: 'Hit an empty node, returning'
         });
@@ -185,14 +185,14 @@ export class ProveOnChainService extends MoverOnChainService {
       const node = await trie.lookupNode(nodeHash);
       if (node === null) {
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: this.sentryCategoryPrefix,
           message: 'Hit an empty node, returning'
         });
         return;
       } else if (node instanceof BranchNode) {
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: this.sentryCategoryPrefix,
           message: 'Hit a branch node',
           data: {
@@ -214,7 +214,7 @@ export class ProveOnChainService extends MoverOnChainService {
         const key = node.key;
 
         addSentryBreadcrumb({
-          type: 'info',
+          level: 'info',
           category: this.sentryCategoryPrefix,
           message: 'Hit an extension/branch node',
           data: {
@@ -225,7 +225,7 @@ export class ProveOnChainService extends MoverOnChainService {
         const keyData = consumeCommonPrefix(key, innerKeyNibbles);
         if (keyData.leftReminder.length === 0) {
           addSentryBreadcrumb({
-            type: 'info',
+            level: 'info',
             category: this.sentryCategoryPrefix,
             message: 'Non-divergent leaf/extension'
           });
@@ -236,7 +236,7 @@ export class ProveOnChainService extends MoverOnChainService {
           }
         } else {
           addSentryBreadcrumb({
-            type: 'info',
+            level: 'info',
             category: this.sentryCategoryPrefix,
             message: 'Divergent leaf/extension'
           });
@@ -251,7 +251,7 @@ export class ProveOnChainService extends MoverOnChainService {
 
     await aux(trie.root, keyNibbles);
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: this.sentryCategoryPrefix,
       message: 'After aux',
       data: {
@@ -267,7 +267,7 @@ export class ProveOnChainService extends MoverOnChainService {
   private rlpTransaction(txData: RPCTransaction, common?: Common): Uint8Array {
     const txType = (txData as any).type;
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: this.sentryCategoryPrefix,
       message: 'After aux',
       data: {
@@ -385,7 +385,7 @@ export class ProveOnChainService extends MoverOnChainService {
 
     if (calculatedHash !== txData.hash) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Tx hash does not match',
         data: {
@@ -396,7 +396,7 @@ export class ProveOnChainService extends MoverOnChainService {
       throw new MoverError('Tx hash is wrong');
     } else {
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: this.sentryCategoryPrefix,
         message: 'Tx hash is correct',
         data: {

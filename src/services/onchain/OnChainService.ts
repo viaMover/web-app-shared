@@ -54,7 +54,7 @@ export abstract class OnChainService extends PromiEventWrapper {
   ): Promise<void> {
     if (this.addMemPoolTxHandler === undefined) {
       addSentryBreadcrumb({
-        type: 'debug',
+        level: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Missing addMemPoolTxHandler. Unable to add tx to mem pool'
       });
@@ -71,7 +71,7 @@ export abstract class OnChainService extends PromiEventWrapper {
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'warning',
+        level: 'warning',
         category: this.sentryCategoryPrefix,
         message: 'Failed to get transaction by hash during addition of mempool tx',
         data: {
@@ -99,7 +99,7 @@ export abstract class OnChainService extends PromiEventWrapper {
       return new this.web3Client.eth.Contract(jsonInterface, contractAddress, options);
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'warning',
+        level: 'warning',
         category: this.sentryCategoryPrefix,
         message: 'Failed to create / find Smart Contract at given address',
         data: {
@@ -123,7 +123,7 @@ export abstract class OnChainService extends PromiEventWrapper {
       return await executor();
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'On-chain call failed',
         data: {
@@ -148,7 +148,7 @@ export abstract class OnChainService extends PromiEventWrapper {
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to "needsApprove" check',
         data: {
@@ -163,7 +163,7 @@ export abstract class OnChainService extends PromiEventWrapper {
     }
 
     addSentryBreadcrumb({
-      type: 'debug',
+      level: 'debug',
       category: this.sentryCategoryPrefix,
       message: 'Needs approve'
     });
@@ -172,7 +172,7 @@ export abstract class OnChainService extends PromiEventWrapper {
       return await this.estimateApprove(token.address, contractAddress);
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed "approve" estimation',
         data: {
@@ -220,7 +220,7 @@ export abstract class OnChainService extends PromiEventWrapper {
       return !greaterThan(allowance, rawAmount);
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to get allowance for token',
         data: {
@@ -286,7 +286,7 @@ export abstract class OnChainService extends PromiEventWrapper {
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate approve',
         data: {
@@ -363,7 +363,7 @@ export abstract class OnChainService extends PromiEventWrapper {
         );
       } catch (error) {
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to approve',
           data: {
@@ -410,7 +410,7 @@ export abstract class OnChainService extends PromiEventWrapper {
         const estimation = await estimateHandler();
 
         addSentryBreadcrumb({
-          type: 'debug',
+          level: 'debug',
           message: 'Estimated transaction after approve',
           data: {
             oldGasLimit: actionGasLimit,

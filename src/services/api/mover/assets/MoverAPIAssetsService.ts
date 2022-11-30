@@ -212,7 +212,7 @@ export class MoverAssetsService extends MoverAPIService {
       };
     } catch (err) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         message: `failed get token data from "/token/${network}/${tokenAddress}"`,
         category: this.sentryCategoryPrefix,
         data: {
@@ -246,7 +246,7 @@ export class MoverAssetsService extends MoverAPIService {
       };
     } catch (err) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         message: `failed get permit data from "/token/${network}/${tokenAddress}/permit"`,
         category: this.sentryCategoryPrefix,
         data: {

@@ -105,7 +105,7 @@ export abstract class MoverOnChainService extends OnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'warning',
+      level: 'warning',
       category: this.sentryCategoryPrefix,
       message: 'Contract is not available in current network',
       data: {

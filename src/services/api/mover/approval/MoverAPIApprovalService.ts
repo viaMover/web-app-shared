@@ -28,7 +28,7 @@ export class MoverAPIApprovalService extends MoverAPIService {
     const chainId = getNetwork(network).chainId;
 
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: `${this.sentryCategoryPrefix}.checkApproval`,
       message: 'do approvecheck call',
       data: {

@@ -22,7 +22,7 @@ export abstract class MoverAPIService extends Service {
   protected formatError(error: unknown): never {
     if (error instanceof MoverAPIError) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         message: 'API responded with an error',
         category: this.sentryCategoryPrefix,
         data: {
@@ -44,7 +44,7 @@ export abstract class MoverAPIService extends Service {
         // that falls out of the range of 2xx
         if (axiosError.response.data === undefined) {
           addSentryBreadcrumb({
-            type: 'error',
+            level: 'error',
             message: 'API responded with an error',
             category: this.sentryCategoryPrefix,
             data: {
@@ -57,7 +57,7 @@ export abstract class MoverAPIService extends Service {
         }
 
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
           data: {
@@ -76,7 +76,7 @@ export abstract class MoverAPIService extends Service {
         // The request was made but no response was received
         // `error.request` is an instance of XMLHttpRequest
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           message: 'API responded with an error',
           category: this.sentryCategoryPrefix,
           data: {
@@ -90,7 +90,7 @@ export abstract class MoverAPIService extends Service {
     }
 
     addSentryBreadcrumb({
-      type: 'error',
+      level: 'error',
       message: 'API responded with an error',
       category: this.sentryCategoryPrefix,
       data: {
@@ -131,7 +131,7 @@ export abstract class MoverAPIService extends Service {
         // response and/or the response should be treated as an error
         if (isErrorResponse(response.data)) {
           addSentryBreadcrumb({
-            type: 'error',
+            level: 'error',
             message: 'API responded with code 200 but data.status is "error"',
             category: this.sentryCategoryPrefix,
             data: {

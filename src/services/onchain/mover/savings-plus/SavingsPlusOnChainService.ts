@@ -203,7 +203,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     try {
       if (isDepositWithBridgeTransactionData(depositData)) {
         addSentryBreadcrumb({
-          type: 'debug',
+          level: 'debug',
           category: this.sentryCategoryPrefix,
           message: 'Needs bridge. Will estimateDepositWithBridge',
           data: {
@@ -224,7 +224,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       }
 
       addSentryBreadcrumb({
-        type: 'debug',
+        level: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Does not need bridge. Will estimateDeposit',
         data: {
@@ -244,7 +244,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       );
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit',
         data: {
@@ -298,7 +298,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         (newGasLimit) => {
           if (isDepositWithBridgeTransactionData(depositData)) {
             addSentryBreadcrumb({
-              type: 'debug',
+              level: 'debug',
               category: this.sentryCategoryPrefix,
               message: 'Needs bridge. Will depositWithBridge',
               data: {
@@ -322,7 +322,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
           }
 
           addSentryBreadcrumb({
-            type: 'debug',
+            level: 'debug',
             category: this.sentryCategoryPrefix,
             message: 'Does not need bridge. Will deposit',
             data: {
@@ -363,7 +363,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       this.rethrowIfUserRejectedRequest(error);
 
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to deposit',
         data: {
@@ -461,7 +461,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
 
     if (isWithdrawComplexTransactionData(withdrawData)) {
       addSentryBreadcrumb({
-        type: 'debug',
+        level: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Execution is planned in another network. No need to estimate',
         data: {
@@ -481,7 +481,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'debug',
+      level: 'debug',
       category: this.sentryCategoryPrefix,
       message: 'Execution is planned in current network',
       data: {
@@ -507,7 +507,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       };
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate withdraw',
         data: {
@@ -546,7 +546,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
 
     if (isWithdrawComplexTransactionData(withdrawData)) {
       addSentryBreadcrumb({
-        type: 'debug',
+        level: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Execution is planned in another network',
         data: {
@@ -569,7 +569,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         this.rethrowIfUserRejectedRequest(error, EECode.userRejectSign);
 
         addSentryBreadcrumb({
-          type: 'error',
+          level: 'error',
           category: this.sentryCategoryPrefix,
           message: 'Failed to withdraw (backend execution failed)',
           data: {
@@ -600,7 +600,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'debug',
+      level: 'debug',
       category: this.sentryCategoryPrefix,
       message: 'Execution is planned in current network',
       data: {
@@ -625,7 +625,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       this.rethrowIfUserRejectedRequest(error);
 
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to withdraw (same network tx execution failed)',
         data: {
@@ -691,7 +691,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
 
     if (transferData === undefined) {
       addSentryBreadcrumb({
-        type: 'debug',
+        level: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'transferData is undefined. Estimate bridgeAsset instead of swapBridgeAsset',
         data: {
@@ -718,7 +718,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     }
 
     addSentryBreadcrumb({
-      type: 'debug',
+      level: 'debug',
       category: this.sentryCategoryPrefix,
       message:
         'transferData is not undefined so additional swap is needed. Estimate swapBridgeAsset instead of bridgeAsset',
@@ -734,7 +734,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       const additionalParams = this.mapAdditionalSwapBridgeParams(transferData, depositData);
 
       addSentryBreadcrumb({
-        type: 'debug',
+        level: 'debug',
         category: this.sentryCategoryPrefix,
         message: 'Using different signature with minToMint and minDy as current network is mainnet',
         data: additionalParams
@@ -862,7 +862,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
 
       if (transferData === undefined) {
         addSentryBreadcrumb({
-          type: 'debug',
+          level: 'debug',
           category: this.sentryCategoryPrefix,
           message: 'transferData is undefined. Execute bridgeAsset instead of swapBridgeAsset',
           data: {
@@ -916,7 +916,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
       }
 
       addSentryBreadcrumb({
-        type: 'debug',
+        level: 'debug',
         category: this.sentryCategoryPrefix,
         message:
           'transferData is not undefined so additional swap is needed. Execute swapBridgeAsset instead of bridgeAsset',
@@ -932,7 +932,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
         const additionalParams = this.mapAdditionalSwapBridgeParams(transferData, depositData);
 
         addSentryBreadcrumb({
-          type: 'debug',
+          level: 'debug',
           category: this.sentryCategoryPrefix,
           message:
             'Using different signature with minToMint and minDy as current network is mainnet',

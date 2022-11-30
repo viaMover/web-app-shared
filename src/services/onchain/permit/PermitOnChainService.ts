@@ -34,7 +34,7 @@ export class PermitOnChainService extends OnChainService {
   ): Promise<string> {
     const erc20Name = await this.getErc20Name(currentAddress, tokenAddress);
     addSentryBreadcrumb({
-      type: 'info',
+      level: 'info',
       category: this.sentryCategoryPrefix,
       message: 'get erc20 name from token contract',
       data: {
@@ -72,7 +72,7 @@ export class PermitOnChainService extends OnChainService {
         );
 
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: this.sentryCategoryPrefix,
         message: 'domain separators',
         data: {
@@ -84,7 +84,7 @@ export class PermitOnChainService extends OnChainService {
 
       const nonce = await eip2612PermitUtils.getTokenNonce(tokenAddress, currentAddress);
       addSentryBreadcrumb({
-        type: 'info',
+        level: 'info',
         category: this.sentryCategoryPrefix,
         message: 'get nonce from token contract',
         data: {

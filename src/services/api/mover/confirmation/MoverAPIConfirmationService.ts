@@ -27,7 +27,7 @@ export class MoverAPIConfirmationService extends MoverAPIService {
       return resp.data.payload.count;
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         message: 'Fetch count confirmation error',
         category: this.sentryCategoryPrefix,
         data: {

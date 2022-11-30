@@ -49,7 +49,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
     }
 
     addSentryBreadcrumb({
-      type: 'debug',
+      level: 'debug',
       category: this.sentryCategoryPrefix,
       message: 'About to send subsidized request',
       data: {
@@ -102,7 +102,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
     );
 
     addSentryBreadcrumb({
-      type: 'debug',
+      level: 'debug',
       category: this.sentryCategoryPrefix,
       message: 'About to send subsidized request',
       data: {
@@ -155,7 +155,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
       switch (response.txStatusCode) {
         case TransactionStatus.Discarded:
           addSentryBreadcrumb({
-            type: 'error',
+            level: 'error',
             message: 'Subsidized transaction was discarded',
             data: {
               queueId,
@@ -171,7 +171,7 @@ export class MoverAPISubsidizedService extends MoverAPIService {
         case TransactionStatus.Completed:
           if (response.txID === undefined) {
             addSentryBreadcrumb({
-              type: 'error',
+              level: 'error',
               message: 'Subsidized transaction has no txID but must have one',
               data: {
                 queueId,

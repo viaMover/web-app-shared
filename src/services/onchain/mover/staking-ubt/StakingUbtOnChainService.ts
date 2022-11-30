@@ -72,7 +72,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       this.rethrowIfUserRejectedRequest(error);
 
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to deposit',
         data: {
@@ -190,7 +190,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       }
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate deposit',
         data: {
@@ -224,7 +224,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       this.rethrowIfUserRejectedRequest(error);
 
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to withdraw',
         data: {
@@ -290,7 +290,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
       };
     } catch (error) {
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         category: this.sentryCategoryPrefix,
         message: 'Failed to estimate withdraw',
         data: {

@@ -90,7 +90,7 @@ export class MoverAPITxTagService extends MoverAPIService {
         throw new ExpectedError(EECode.userRejectSign);
       }
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         message: 'error during signing approval of incoming top up',
         data: {
           currentAddress,
@@ -136,7 +136,7 @@ export class MoverAPITxTagService extends MoverAPIService {
         throw new ExpectedError(EECode.userRejectSign);
       }
       addSentryBreadcrumb({
-        type: 'error',
+        level: 'error',
         message: 'error during signing rejection of incoming top up',
         data: {
           currentAddress,
