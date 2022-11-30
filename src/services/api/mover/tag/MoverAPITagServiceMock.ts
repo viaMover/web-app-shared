@@ -1,11 +1,11 @@
 import dayjs from 'dayjs';
-import { MoverAPITagService } from 'src/services/api/mover/tag/MoverAPITagService';
 import Web3 from 'web3';
 
 import { addSentryBreadcrumb } from '../../../../logs/sentry';
 import { EECode, ExpectedError } from '../../../ExpectedError';
 import { isRejectedRequestError } from '../../../onchain/ProviderRPCError';
 import { MoverAPIError } from '../MoverAPIError';
+import { MoverAPITagService } from './MoverAPITagService';
 import {
   AddApprovedWalletReturn,
   ApprovedWalletsList,
