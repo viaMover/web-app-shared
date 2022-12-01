@@ -5,6 +5,11 @@ export type BridgeDataResponse = {
   BridgeFeeInPercents: string;
 };
 
+export type UnwrapEstimationData = {
+  UnwrappedTokenAddress: string;
+  UnwrappedAmountInWei: string;
+};
+
 export type TopUpProxyContract = CustomContractType<{
   // l2 version
   CardTopupPermit(
@@ -70,4 +75,6 @@ export type TopUpProxyContract = CustomContractType<{
     _convertData: number[],
     _receiverHash: Buffer
   ): ContractMethod;
+  unwrapSupported(address: string): ContractMethod<boolean>;
+  estimateUnwrap(address: string, _amount: string): ContractMethod<[string, string]>;
 }>;
