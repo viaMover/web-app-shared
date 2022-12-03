@@ -85,7 +85,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
   protected readonly topUpProxyAddress: string;
   protected readonly topUpProxyContract: TopUpProxyContract | undefined;
 
-  private readonly useMockEstimation = true;
+  private readonly useMockEstimation = false;
 
   constructor(
     currentAddress: string,
