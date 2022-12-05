@@ -302,10 +302,6 @@ export class DebitCardOnChainService extends MoverOnChainService {
         const bridgeDataResp = await this.getBridgeData(bridgeType, amountForBridge);
         bridgeData = bridgeDataResp.BridgeData;
 
-        console.log('bridgeDataResp.BridgeFeeInPercents', bridgeDataResp.BridgeFeeInPercents);
-        console.log('usdcSent', usdcSent);
-        console.log('transferData', transferData);
-
         const newFeeInUsdc = fromWei(
           multiply(usdcSent, bridgeDataResp.BridgeFeeInPercents),
           this.usdcAssetData.decimals
@@ -326,9 +322,6 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
           throw new MoverError('actual bridging fee is too bigger than calculated before');
         }
-
-        console.log('newFeeInUsdc', newFeeInUsdc);
-        console.log('bridgingFeeInUSDC', bridgingFeeInUSDC);
       }
       addSentryBreadcrumb({
         level: 'info',
