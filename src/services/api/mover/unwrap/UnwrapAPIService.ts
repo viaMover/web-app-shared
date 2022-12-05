@@ -4,6 +4,7 @@ import { Network } from '../../../../references/network';
 import { MoverError } from '../../../MoverError';
 import { getParamsSerializer } from '../../../utils/params';
 import { MoverAPIService } from '../MoverAPIService';
+import { MoverAPISuccessfulResponse } from '../types';
 import { CheckUnwrapTokenResponse, CheckUnwrapTokenResult } from './types';
 
 /**
@@ -31,7 +32,7 @@ export class UnwrapAPIService extends MoverAPIService {
     confirmationSignature: string
   ): Promise<CheckUnwrapTokenResult> => {
     try {
-      const response = await this.client.post<CheckUnwrapTokenResponse>(
+      const response = await this.client.post<MoverAPISuccessfulResponse<CheckUnwrapTokenResponse>>(
         '/private/unwrap/token',
         {
           token: tokenAddress,
@@ -43,7 +44,7 @@ export class UnwrapAPIService extends MoverAPIService {
         }
       );
 
-      return response.data;
+      return response.data.payload;
     } catch (e) {
       throw new MoverError(`Can't check unwrap ability of token`, { error: e });
     }
