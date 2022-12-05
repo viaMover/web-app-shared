@@ -16,7 +16,6 @@ import {
   getNetwork,
   getNetworkAddress,
   getNetworkConstant,
-  getSlippage,
   isBaseAssetByNetwork
 } from '../../../../references/references';
 import {
@@ -248,18 +247,18 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
         tokenAddressForSwap = unwrapData.UnwrappedTokenAddress;
         tokenAmountInWeiForSwap = unwrapData.UnwrappedAmountInWei;
-        if (!sameAddress(tokenAddressForSwap, this.usdcAssetData.address)) {
-          transferData = await this.swapService.getTransferData(
-            this.usdcAssetData.address,
-            tokenAddressForSwap,
-            tokenAmountInWeiForSwap,
-            true,
-            getSlippage(tokenAddressForSwap, this.network),
-            getNetworkAddress(this.network, 'TOP_UP_EXCHANGE_PROXY_ADDRESS')
-          );
-        } else {
-          transferData = undefined;
-        }
+        // if (!sameAddress(tokenAddressForSwap, this.usdcAssetData.address)) {
+        // transferData = await this.swapService.getTransferData(
+        //     this.usdcAssetData.address,
+        //     tokenAddressForSwap,
+        //     tokenAmountInWeiForSwap,
+        //     true,
+        //     getSlippage(tokenAddressForSwap, this.network),
+        //     getNetworkAddress(this.network, 'TOP_UP_EXCHANGE_PROXY_ADDRESS')
+        // );
+        // } else {
+        // transferData = undefined;
+        // }
       }
 
       if (
