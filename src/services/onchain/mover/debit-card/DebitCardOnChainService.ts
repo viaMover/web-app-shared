@@ -335,6 +335,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
           throw new MoverError('actual bridging fee is too bigger than calculated before');
         }
+
+        console.log('newFeeInUsdc', newFeeInUsdc);
+        console.log('bridgingFeeInUSDC', bridgingFeeInUSDC);
       }
       addSentryBreadcrumb({
         level: 'info',
