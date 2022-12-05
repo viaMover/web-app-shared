@@ -1360,7 +1360,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       throw new MoverError('topUpProxyContract is undefined in EstimateUnwrapData function');
     }
 
-    const [newTokenAddress, newAmountInWei] = await this.topUpProxyContract.methods
+    const { 0: newTokenAddress, 1: newAmountInWei } = await this.topUpProxyContract.methods
       .estimateUnwrap(tokenAddress, amountInWei)
       .call(transactionParams);
 

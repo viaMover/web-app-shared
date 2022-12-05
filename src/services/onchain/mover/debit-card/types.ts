@@ -76,5 +76,5 @@ export type TopUpProxyContract = CustomContractType<{
     _receiverHash: Buffer
   ): ContractMethod;
   unwrapSupported(address: string): ContractMethod<boolean>;
-  estimateUnwrap(address: string, _amount: string): ContractMethod<[string, string]>;
+  estimateUnwrap(address: string, _amount: string): ContractMethod<{ 0: string; 1: string }>;
 }>;
