@@ -317,6 +317,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
         console.log('bridgeDataResp.BridgeFeeInPercents', bridgeDataResp.BridgeFeeInPercents);
         console.log('usdcSent', usdcSent);
+        console.log('transferData', transferData);
 
         const newFeeInUsdc = fromWei(
           multiply(usdcSent, bridgeDataResp.BridgeFeeInPercents),
