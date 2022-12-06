@@ -444,24 +444,23 @@ export class DebitCardOnChainService extends MoverOnChainService {
           type: InternalTransactionType.Confirm,
           state: State.Pending
         });
-        // const unwrapEstimation = await specialTokenHandler.estimateUnwrap(inputAsset, inputAmount);
-        //
-        // let inputAmountInWei = '0';
-        // try {
-        // inputAmountInWei = await specialTokenHandler.unwrap(
-        //     inputAsset,
-        //     inputAmount,
-        //     async () => {
-        //       //
-        //     },
-        //     unwrapEstimation.gasLimit,
-        //     eb
-        // );
-        // } catch (error) {
-        // this.rethrowIfUserRejectedRequest(error, EECode.userRejectTransaction);
-        // throw error;
-        // }
-        //
+        const unwrapEstimation = await specialTokenHandler.estimateUnwrap(inputAsset, inputAmount);
+
+        let inputAmountInWei = '0';
+        try {
+          inputAmountInWei = await specialTokenHandler.unwrap(
+            inputAsset,
+            inputAmount,
+            async () => {
+              //
+            },
+            unwrapEstimation.gasLimit,
+            eb
+          );
+        } catch (error) {
+          this.rethrowIfUserRejectedRequest(error, EECode.userRejectTransaction);
+          throw error;
+        }
 
         const unwrappedTokenData = specialTokenHandler.getUnwrappedToken();
         const unwrappedTokenPermitData = await this.assetsService.getPermitData(
@@ -469,20 +468,19 @@ export class DebitCardOnChainService extends MoverOnChainService {
           inputNetwork
         );
 
-        const inputAssetForTransferData = {
+        inputAsset = {
           ...unwrappedTokenData,
           ...unwrappedTokenPermitData
         };
-        //inputAmount = fromWei(inputAmountInWei, inputAsset.decimals);
-        const inputAmountInWei = toWei(inputAmount, inputAsset.decimals);
-        console.log('inputAmountInWei: ', inputAmountInWei);
-        if (!sameAddress(inputAssetForTransferData.address, this.usdcAssetData.address)) {
+        inputAmount = fromWei(inputAmountInWei, inputAsset.decimals);
+
+        if (!sameAddress(inputAsset.address, this.usdcAssetData.address)) {
           transferData = await this.swapService.getTransferData(
             this.usdcAssetData.address,
-            inputAssetForTransferData.address,
+            inputAsset.address,
             inputAmountInWei,
             true,
-            getSlippage(inputAssetForTransferData.address, this.network),
+            getSlippage(inputAsset.address, this.network),
             getNetworkAddress(this.network, 'TOP_UP_EXCHANGE_PROXY_ADDRESS')
           );
         } else {
