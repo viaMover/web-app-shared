@@ -30,6 +30,7 @@ import { MoverAPIApprovalService } from '../../../api/mover/approval/MoverAPIApp
 import { GetApprovalReturn } from '../../../api/mover/approval/types';
 import { MoverAssetsService } from '../../../api/mover/assets/MoverAPIAssetsService';
 import { TransactionDirection, TransactionType } from '../../../api/mover/transactions/types';
+import { UnwrapAPIService } from '../../../api/mover/unwrap/UnwrapAPIService';
 import { SwapAPIService } from '../../../api/swap/SwapAPIService';
 import { TransferData } from '../../../api/swap/types';
 import { EECode } from '../../../ExpectedError';
@@ -74,7 +75,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
     protected readonly assetsService: MoverAssetsService,
     protected readonly permitService: PermitOnChainService,
     protected readonly approvalService: MoverAPIApprovalService,
-    protected readonly proofService: ProveOnChainService
+    protected readonly proofService: ProveOnChainService,
+    protected readonly unwrapService: UnwrapAPIService
   ) {
     super('debit-card.on-chain.service', currentAddress, network, web3Client);
     this.usdcAssetData = getUSDCAssetData(network);
@@ -108,7 +110,10 @@ export class DebitCardOnChainService extends MoverOnChainService {
     let index = 0;
     const steps = new Array<TransactionStateItem>();
 
-    const isUnwrapSupported = await this.isUnwrapSupported(inputAsset.address);
+    const unwrapData = await this.unwrapService.CheckAndGetUnwrapToken(
+      inputAsset.network,
+      inputAsset.address
+    );
 
     const isBase = isBaseAssetByNetwork(inputAsset.address, this.network);
 
@@ -158,13 +163,13 @@ export class DebitCardOnChainService extends MoverOnChainService {
       timestamp: 0
     });
 
-    if (isUnwrapSupported) {
+    if (unwrapData.isUnwrapSupported) {
       steps.push({
         index: index++,
         type: InternalTransactionType.Unwrap,
         state: State.Queued,
-        estimation: 15,
-        token: inputAsset,
+        estimation: 5,
+        token: unwrapData.token,
         network: inputAsset.network,
         timestamp: 0
       });
