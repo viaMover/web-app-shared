@@ -163,16 +163,18 @@ export class DebitCardOnChainService extends MoverOnChainService {
       timestamp: 0
     });
 
+    let assetAfterUnwrap: SmallTokenInfo = inputAsset;
     if (unwrapData.isUnwrapSupported) {
       steps.push({
         index: index++,
         type: InternalTransactionType.Unwrap,
         state: State.Queued,
         estimation: 5,
-        token: unwrapData.token,
+        token: inputAsset,
         network: inputAsset.network,
         timestamp: 0
       });
+      assetAfterUnwrap = unwrapData.token;
     }
 
     if (isSwapNeeded) {
@@ -181,7 +183,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
         type: InternalTransactionType.Swap,
         state: State.Queued,
         estimation: 15,
-        token: inputAsset,
+        token: assetAfterUnwrap,
         network: inputAsset.network,
         timestamp: 0
       });

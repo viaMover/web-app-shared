@@ -1,3 +1,4 @@
+import { Network } from '../../../../references/network';
 import { Token } from '../../../../references/tokens';
 
 export type CheckUnwrapTokenResponse = {
@@ -14,10 +15,22 @@ export type CheckUnwrapTokenResult = {
 
 export type CheckAndGetUnwrapTokenResponse = {
   isUnwrapSupported: boolean;
-  token: Token;
+  token: AssetData;
 };
 
 export type CheckAndGetUnwrapTokenResult = {
   isUnwrapSupported: boolean;
   token: Token;
+};
+
+export type AssetData = {
+  address: string;
+  decimals: number;
+  symbol: string;
+  name: string;
+  logoUrl: string;
+  network: Network;
+  hasPermit: boolean;
+  permitType?: string;
+  permitVersion?: string;
 };

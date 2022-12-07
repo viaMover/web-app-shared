@@ -62,7 +62,17 @@ export class UnwrapAPIService extends MoverAPIService {
         network: network
       });
 
-      return response.data.payload;
+      return {
+        isUnwrapSupported: response.data.payload.isUnwrapSupported,
+        token: {
+          address: response.data.payload.token.address,
+          decimals: response.data.payload.token.decimals,
+          symbol: response.data.payload.token.symbol,
+          network: response.data.payload.token.network,
+          name: response.data.payload.token.name,
+          iconURL: response.data.payload.token.logoUrl
+        }
+      };
     } catch (e) {
       throw new MoverError(`Can't check unwrap ability of token`, { error: e });
     }
