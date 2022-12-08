@@ -62,8 +62,9 @@ export abstract class MoverAPIService extends Service {
           category: this.sentryCategoryPrefix,
           data: {
             error: axiosError.response.data.error,
-            shortError: axiosError.response.data.errorCode,
-            axiosError
+            errorCode: axiosError.response.data.errorCode,
+            payload: axiosError.response.data.payload,
+            responseCode: axiosError.response.status
           }
         });
 
@@ -177,12 +178,14 @@ export abstract class MoverAPIService extends Service {
     const { code } = axiosError;
 
     return {
+      level: 'debug',
       message: 'A request to the API is failed',
       category: this.sentryCategoryPrefix,
       data: {
         requestUri,
-        code,
-        axiosError
+        responseCode: axiosError.response?.status,
+        axiosCode: code,
+        axiosStatus: axiosError.status
       }
     };
   }
