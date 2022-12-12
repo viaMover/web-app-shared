@@ -44,6 +44,7 @@ type ConstantsMapNetworkEntry = Readonly<{
   CUSTOM_TOKEN_SLIPPAGE: Map<string, string>;
   USDC_SPECIFIC_DECIMALS: number;
   BRIDGE_TYPE: BridgeType;
+  DEFAULT_TOPUP_BASE_TOKEN_GAS_LIMIT: string;
 }>;
 export type ConstantsMap = Readonly<Record<Network, ConstantsMapNetworkEntry>>;
 
@@ -57,7 +58,6 @@ export type NetworkInfo = {
   rpcUrl: (apiKeys?: Partial<APIKeys>) => string[];
   iconURL: string;
   displayedName: string;
-  defaultTopUpWithBaseTokenGasLimit: string;
 };
 
 export type NetworkInfoMap = Record<Network, NetworkInfo>;
