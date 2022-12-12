@@ -23,7 +23,8 @@ export const networkConstants = {
     CUSTOM_TOKEN_SLIPPAGE: new Map<string, string>([
       ['0xf0f9d895aca5c8678f706fb8216fa22957685a13', '25']
     ]),
-    BRIDGE_TYPE: BridgeType.None
+    BRIDGE_TYPE: BridgeType.None,
+    DEFAULT_TOPUP_BASE_TOKEN_GAS_LIMIT: '400000'
   },
   [Network.fantom]: {
     ORDER_OF_LIBERTY_DEFAULT_PRICE: toWei('10', networks[Network.fantom].baseAsset.decimals),
