@@ -39,7 +39,8 @@ export const networkConstants = {
       toWei('100', networks[Network.polygon].baseAsset.decimals),
       toWei('1000', networks[Network.polygon].baseAsset.decimals)
     ],
-    BRIDGE_TYPE: BridgeType.Across
+    BRIDGE_TYPE: BridgeType.Across,
+    DEFAULT_TOPUP_BASE_TOKEN_GAS_LIMIT: '500000'
   },
   [Network.arbitrum]: {
     BRIDGE_TYPE: BridgeType.Across
