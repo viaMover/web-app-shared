@@ -57,6 +57,7 @@ export type NetworkInfo = {
   rpcUrl: (apiKeys?: Partial<APIKeys>) => string[];
   iconURL: string;
   displayedName: string;
+  defaultTopUpWithBaseTokenGasLimit: string;
 };
 
 export type NetworkInfoMap = Record<Network, NetworkInfo>;

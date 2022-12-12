@@ -601,8 +601,6 @@ export class DebitCardOnChainService extends MoverOnChainService {
           receiverHash
         );
 
-        console.log('topUpWithPermitGasLimit: ', topUpWithPermitGasLimit);
-
         try {
           return await this.topUpWithPermit(
             inputAsset,
