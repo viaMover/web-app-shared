@@ -16,17 +16,10 @@ export class MoverAPIEstimationService extends MoverAPIService {
     this.client = this.applyAxiosInterceptors(axios.create({ baseURL: this.baseURL }));
   }
 
-  public async getTopUpEstimation(
-    network: Network,
-    address: string,
-    confirmationSignature: string
-  ): Promise<GetEstimationReturn> {
+  public async getTopUpEstimation(network: Network): Promise<GetEstimationReturn> {
     const data = (
       await this.client.get<MoverAPISuccessfulResponse<GetEstimationAPIResponse>>(
-        `/private/estimation/${network}/topup`,
-        {
-          headers: this.getAuthHeaders(address, confirmationSignature)
-        }
+        `/private/estimation/${network}/topup`
       )
     ).data.payload;
 
