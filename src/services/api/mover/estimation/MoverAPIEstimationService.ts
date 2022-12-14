@@ -19,7 +19,7 @@ export class MoverAPIEstimationService extends MoverAPIService {
   public async getTopUpEstimation(network: Network): Promise<GetEstimationReturn> {
     const data = (
       await this.client.get<MoverAPISuccessfulResponse<GetEstimationAPIResponse>>(
-        `/private/estimation/${network}/topup`
+        `/estimation/${network}/topup`
       )
     ).data.payload;
 
