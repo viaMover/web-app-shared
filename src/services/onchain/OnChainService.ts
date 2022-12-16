@@ -3,16 +3,18 @@ import { TransactionReceipt } from 'web3-eth';
 import { ContractOptions } from 'web3-eth-contract';
 import { AbiItem } from 'web3-utils';
 
-import { getPureBaseAssetAddress } from '../../helpers/addresses';
+import { getPureBaseAssetAddress, sameAddress } from '../../helpers/addresses';
 import { floorDivide, fromWei, greaterThan, MAXUINT256, multiply } from '../../helpers/bigmath';
 import { addSentryBreadcrumb } from '../../logs/sentry';
 import { ERC20_ABI } from '../../references/abi';
 import { Network } from '../../references/network';
-import { isBaseAsset } from '../../references/references';
+import { isBaseAsset, isBaseAssetByNetwork } from '../../references/references';
 import { SmallTokenInfo } from '../../references/tokens';
 import { TransactionInMemPoolTemplate } from '../api/mover/transactions/types';
+import { BaseTokenError } from '../BaseTokenError';
 import { EECode, ExpectedError } from '../ExpectedError';
 import { NetworkFeatureNotSupportedError } from '../NetworkFeatureNotSupportedError';
+import { EmptyTransactionStateEventBus } from './EmptyTransactionStateEventBus';
 import { OnChainServiceError } from './OnChainServiceError';
 import { PromiEventWrapper } from './PromiEventWrapper';
 import { isRejectedRequestError } from './ProviderRPCError';
@@ -31,6 +33,9 @@ export abstract class OnChainService extends PromiEventWrapper {
   protected readonly network: Network;
   protected readonly web3Client: Web3;
   protected addMemPoolTxHandler?: IMemPoolTxAdder;
+
+  // for Tether token from Ethereum we MUST reduce allowance to zero before set it to new value.
+  protected readonly tetherAddress = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
 
   protected constructor(
     sentryCategoryPrefix: string,
@@ -239,6 +244,56 @@ export abstract class OnChainService extends PromiEventWrapper {
     }
   }
 
+  protected async getAllowance(
+    tokenAddress: string,
+    network: Network,
+    contractAddress: string
+  ): Promise<string> {
+    // Base network asset doesn't need approve to be spent by Smart Contracts
+    if (isBaseAssetByNetwork(tokenAddress, network)) {
+      throw new BaseTokenError(tokenAddress, network);
+    }
+
+    const tokenContract = this.createArbitraryContract<ERC20ContractMethods>(
+      tokenAddress,
+      ERC20_ABI as AbiItem[]
+    );
+
+    if (tokenContract === undefined) {
+      throw new NetworkFeatureNotSupportedError(
+        `ERC20 Contract on ${contractAddress}`,
+        this.network
+      );
+    }
+
+    try {
+      const allowance = await tokenContract.methods
+        .allowance(this.currentAddress, contractAddress)
+        .call({
+          from: contractAddress
+        });
+
+      return allowance;
+    } catch (error) {
+      addSentryBreadcrumb({
+        level: 'error',
+        category: this.sentryCategoryPrefix,
+        message: 'Failed to get allowance for token',
+        data: {
+          tokenAddress,
+          spender: contractAddress,
+          owner: this.currentAddress,
+          error
+        }
+      });
+
+      throw new OnChainServiceError(`Failed to get allowance for token: ${tokenAddress}`, {
+        tokenAddress,
+        contractAddress
+      }).wrap(error);
+    }
+  }
+
   protected async approveCompound(
     tokenAddress: string,
     spenderAddress: string,
@@ -247,6 +302,31 @@ export abstract class OnChainService extends PromiEventWrapper {
     eb: ITransactionStateEventBus,
     skipApproveEventClosing: boolean
   ): Promise<TransactionReceipt> {
+    if (sameAddress(tokenAddress, this.tetherAddress)) {
+      const allowance = await this.getAllowance(tokenAddress, this.network, spenderAddress);
+      if (greaterThan(allowance, '0')) {
+        addSentryBreadcrumb({
+          level: 'debug',
+          category: this.sentryCategoryPrefix,
+          message: 'Reduce allowance to zero first',
+          data: {
+            tokenAddress,
+            spenderAddress
+          }
+        });
+        const gasLimit = await this.estimateApprove(tokenAddress, spenderAddress, '0');
+        await this.approve(
+          tokenAddress,
+          spenderAddress,
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
+          () => {},
+          gasLimit,
+          '0',
+          new EmptyTransactionStateEventBus(),
+          true
+        );
+      }
+    }
     const gasLimit = await this.estimateApprove(tokenAddress, spenderAddress, amountInWei);
 
     return this.approve(

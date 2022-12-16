@@ -38,7 +38,7 @@ export type TransactionScenario = {
   steps: Array<TransactionStateItem>;
 };
 
-type EmitterPayload = {
+export type EmitterPayload = {
   type: InternalTransactionType;
   state: State;
   hash?: string;
