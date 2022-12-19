@@ -178,7 +178,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
   }
 
   public async explainTopUpCompound(
-    inputAsset: SmallToken & PermitData
+    inputAsset: SmallToken & PermitData,
+    amountInWei: string
   ): Promise<TransactionScenario> {
     let index = 0;
     const steps = new Array<TransactionStateItem>();
@@ -234,6 +235,34 @@ export class DebitCardOnChainService extends MoverOnChainService {
           timestamp: 0
         });
       } else {
+        if (sameAddress(inputAsset.address, this.tetherAddress)) {
+          const allowance = await this.getAllowance(
+            inputAsset.address,
+            inputAsset.network,
+            this.topUpProxyAddress
+          );
+          if (!isEqual(allowance, amountInWei)) {
+            steps.push({
+              index: index++,
+              type: InternalTransactionType.Confirm,
+              state: State.Queued,
+              estimation: 0,
+              token: inputAsset,
+              network: inputAsset.network,
+              timestamp: 0
+            });
+
+            steps.push({
+              index: index++,
+              type: InternalTransactionType.Approve,
+              state: State.Queued,
+              estimation: 15,
+              token: inputAsset,
+              network: inputAsset.network,
+              timestamp: 0
+            });
+          }
+        }
         steps.push({
           index: index++,
           type: InternalTransactionType.Confirm,
