@@ -39,7 +39,7 @@ import {
   TokenWithPrice
 } from '../../../../references/tokens';
 import { AcrossAPIService } from '../../../api/mover/across/AcrossAPIService';
-import { TxDataDto } from '../../../api/mover/activity/types';
+import { TxData } from '../../../api/mover/activity/types';
 import { MoverAPIApprovalService } from '../../../api/mover/approval/MoverAPIApprovalService';
 import { GetApprovalReturn } from '../../../api/mover/approval/types';
 import { MoverAssetsService } from '../../../api/mover/assets/MoverAPIAssetsService';
@@ -462,7 +462,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     transferData: TransferData | undefined,
     tagHash: string,
     bridgingFeeInUSDC: string,
-    onTransactionHash: (hash: string, data: TxDataDto) => void,
+    onTransactionHash: (hash: string, data: TxData) => void,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
     try {
@@ -690,7 +690,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
-    onTransactionHash: (hash: string, data: TxDataDto) => void,
+    onTransactionHash: (hash: string, data: TxData) => void,
     attemptNumber = 1,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -1008,7 +1008,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
-    onTransactionHash: (hash: string, data: TxDataDto) => void,
+    onTransactionHash: (hash: string, data: TxData) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -1218,7 +1218,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
-    onTransactionHash: (hash: string, data: TxDataDto) => void,
+    onTransactionHash: (hash: string, data: TxData) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -1425,7 +1425,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
-    onTransactionHash: (hash: string, data: TxDataDto) => void,
+    onTransactionHash: (hash: string, data: TxData) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
