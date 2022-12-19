@@ -39,6 +39,7 @@ import {
   TokenWithPrice
 } from '../../../../references/tokens';
 import { AcrossAPIService } from '../../../api/mover/across/AcrossAPIService';
+import { TxDataDto } from '../../../api/mover/activity/types';
 import { MoverAPIApprovalService } from '../../../api/mover/approval/MoverAPIApprovalService';
 import { GetApprovalReturn } from '../../../api/mover/approval/types';
 import { MoverAssetsService } from '../../../api/mover/assets/MoverAPIAssetsService';
@@ -461,7 +462,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     transferData: TransferData | undefined,
     tagHash: string,
     bridgingFeeInUSDC: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, data: TxDataDto) => void,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
     try {
@@ -689,7 +690,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, data: TxDataDto) => void,
     attemptNumber = 1,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -1007,7 +1008,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, data: TxDataDto) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -1113,7 +1114,13 @@ export class DebitCardOnChainService extends MoverOnChainService {
               eb.emit({ type: InternalTransactionType.TopUp, state: State.Pending, hash: hash });
             }
           }
-          onTransactionHash(hash);
+          onTransactionHash(hash, {
+            amount: inputAmount,
+            hash: hash,
+            networkFrom: this.network,
+            networkTo: Network.ethereum,
+            token: inputAsset
+          });
         }
       );
     });
@@ -1211,7 +1218,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, data: TxDataDto) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -1314,7 +1321,13 @@ export class DebitCardOnChainService extends MoverOnChainService {
               eb.emit({ type: InternalTransactionType.TopUp, state: State.Pending, hash: hash });
             }
           }
-          onTransactionHash(hash);
+          onTransactionHash(hash, {
+            amount: inputAmount,
+            hash: hash,
+            networkFrom: this.network,
+            networkTo: Network.ethereum,
+            token: inputAsset
+          });
         }
       );
     });
@@ -1412,7 +1425,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, data: TxDataDto) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -1514,7 +1527,13 @@ export class DebitCardOnChainService extends MoverOnChainService {
               eb.emit({ type: InternalTransactionType.TopUp, state: State.Pending, hash: hash });
             }
           }
-          onTransactionHash(hash);
+          onTransactionHash(hash, {
+            amount: inputAmount,
+            hash: hash,
+            networkFrom: this.network,
+            networkTo: Network.ethereum,
+            token: inputAsset
+          });
         }
       );
     });
