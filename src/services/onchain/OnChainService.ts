@@ -322,7 +322,7 @@ export abstract class OnChainService extends PromiEventWrapper {
           gasLimit,
           '0',
           eb,
-          false
+          true
         );
         eb.emit({ type: InternalTransactionType.Confirm, state: State.Pending });
       }
