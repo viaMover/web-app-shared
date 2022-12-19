@@ -14,7 +14,6 @@ import { TransactionInMemPoolTemplate } from '../api/mover/transactions/types';
 import { BaseTokenError } from '../BaseTokenError';
 import { EECode, ExpectedError } from '../ExpectedError';
 import { NetworkFeatureNotSupportedError } from '../NetworkFeatureNotSupportedError';
-import { EmptyTransactionStateEventBus } from './EmptyTransactionStateEventBus';
 import { OnChainServiceError } from './OnChainServiceError';
 import { PromiEventWrapper } from './PromiEventWrapper';
 import { isRejectedRequestError } from './ProviderRPCError';
@@ -322,8 +321,8 @@ export abstract class OnChainService extends PromiEventWrapper {
           () => {},
           gasLimit,
           '0',
-          new EmptyTransactionStateEventBus(),
-          true
+          eb,
+          false
         );
       }
     }

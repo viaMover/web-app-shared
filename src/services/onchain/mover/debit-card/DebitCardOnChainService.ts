@@ -241,7 +241,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
             inputAsset.network,
             this.topUpProxyAddress
           );
-          if (!isEqual(allowance, amountInWei)) {
+          if (greaterThan(allowance, '0') && !isEqual(allowance, amountInWei)) {
             steps.push({
               index: index++,
               type: InternalTransactionType.Confirm,
