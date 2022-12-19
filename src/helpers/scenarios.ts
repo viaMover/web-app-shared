@@ -79,7 +79,7 @@ export const getScenarioByTransaction = (
     case TransactionType.CardTopUp: {
       return factory
         .getDebitCardOnChainService(tx.network)
-        .explainTopUpCompound({ ...tx.token, hasPermit: false }); // TODO permit data
+        .explainTopUpCompound({ ...tx.token, hasPermit: false }, '1'); // TODO permit data
     }
     case TransactionType.SavingsPlusDeposit: {
       const depositData =
