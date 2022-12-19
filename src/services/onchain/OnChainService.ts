@@ -324,6 +324,7 @@ export abstract class OnChainService extends PromiEventWrapper {
           eb,
           false
         );
+        eb.emit({ type: InternalTransactionType.Confirm, state: State.Pending });
       }
     }
     const gasLimit = await this.estimateApprove(tokenAddress, spenderAddress, amountInWei);
