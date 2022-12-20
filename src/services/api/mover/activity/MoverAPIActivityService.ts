@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { getNetwork } from 'src/references/references';
+import { getNetwork } from '../../../../references/references';
 
 import { MoverAPIService } from '../MoverAPIService';
 import { TransactionType } from '../transactions/types';
