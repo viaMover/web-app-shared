@@ -11,7 +11,7 @@ export class MoverAPIActivityService extends MoverAPIService {
 
   constructor(baseURL: string) {
     super('assets.service');
-    this.baseURL = baseURL;
+    this.baseURL = `${baseURL}/private/data-managment`;
     this.client = this.applyAxiosInterceptors(axios.create({ baseURL: this.baseURL }));
   }
 
@@ -30,7 +30,7 @@ export class MoverAPIActivityService extends MoverAPIService {
       type: txType
     };
 
-    return this.client.post(`/private/activities/proxy`, payload, {
+    return this.client.post(`/activities`, payload, {
       headers: this.getAuthHeaders(address, confirmationSignature)
     });
   }
