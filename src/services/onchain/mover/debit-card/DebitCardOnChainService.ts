@@ -4,33 +4,20 @@ import Web3 from 'web3';
 import { TransactionReceipt } from 'web3-eth';
 
 import { sameAddress } from '../../../../helpers/addresses';
-import {
-  fromWei,
-  getInteger,
-  greaterThan,
-  isEqual,
-  multiply,
-  sub,
-  toWei
-} from '../../../../helpers/bigmath';
+import { fromWei, greaterThan, isEqual, multiply, sub, toWei } from '../../../../helpers/bigmath';
 import { asyncSleep } from '../../../../helpers/sleep';
 import { addSentryBreadcrumb } from '../../../../logs/sentry';
 import { getCentralTransferProxyAbi } from '../../../../references/abi';
 import { getTopUpProxyAbi } from '../../../../references/abi/topup-proxy';
 import { getUSDCAssetData } from '../../../../references/assets';
 import { BridgeType, mapBrideTypeToContractsConstant } from '../../../../references/bridge';
-import { gasDefaults } from '../../../../references/gasDefaults';
 import { Network } from '../../../../references/network';
 import {
   getNetwork,
   getNetworkAddress,
   getNetworkConstant,
-  getSlippage,
   isBaseAssetByNetwork
 } from '../../../../references/references';
-import { addresses as aTokenAddresses } from '../../../../references/specialTokens/aTokensData';
-import { addresses as idleTokenAddresses } from '../../../../references/specialTokens/idleTokensData';
-import { addresses as yearnSimpleVaultAddresses } from '../../../../references/specialTokens/yearnVaultsData';
 import {
   PermitData,
   SmallToken,
@@ -43,6 +30,7 @@ import { MoverAPIApprovalService } from '../../../api/mover/approval/MoverAPIApp
 import { GetApprovalReturn } from '../../../api/mover/approval/types';
 import { MoverAssetsService } from '../../../api/mover/assets/MoverAPIAssetsService';
 import { TransactionDirection, TransactionType } from '../../../api/mover/transactions/types';
+import { UnwrapAPIService } from '../../../api/mover/unwrap/UnwrapAPIService';
 import { SwapAPIService } from '../../../api/swap/SwapAPIService';
 import { TransferData } from '../../../api/swap/types';
 import { EECode } from '../../../ExpectedError';
@@ -58,24 +46,14 @@ import {
   TransactionScenario,
   TransactionStateItem
 } from '../../transaction-states';
-import { CompoundEstimateWithUnwrapResponse, UnwrappedData, WrappedData } from '../../types';
-import { WrappedTokenAToken } from '../../wrapped-tokens/aTokens/token';
-import { WrappedTokenDCult } from '../../wrapped-tokens/dCULT/token';
-import { WrappedTokenGALCX } from '../../wrapped-tokens/gALCX/token';
-import { WrappedTokenGOHM } from '../../wrapped-tokens/gOHM/token';
-import { WrappedTokenIdle } from '../../wrapped-tokens/idle/token';
-import { WrappedToken } from '../../wrapped-tokens/WrappedToken';
-import { WrappedTokenWXBTRFLY } from '../../wrapped-tokens/wxBTRFLY/token';
-import { WrappedTokenYearn } from '../../wrapped-tokens/yearn/token';
+import { TransactionsParams } from '../../types';
 import { MoverOnChainService } from '../MoverOnChainService';
 import { ProveOnChainService } from '../prove-txn/ProveOnChainService';
 import { TransferProxyContract } from '../types';
-import { BridgeDataResponse, TopUpProxyContract } from './types';
+import { BridgeDataResponse, TopUpProxyContract, UnwrapEstimationData } from './types';
 
 export class DebitCardOnChainService extends MoverOnChainService {
   protected readonly sentryCategoryPrefix = 'debit-card.on-chain.service';
-
-  specialTokenHandlers: Array<WrappedToken> = [];
 
   protected readonly usdcAssetData: SmallTokenInfo;
 
@@ -97,7 +75,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
     protected readonly assetsService: MoverAssetsService,
     protected readonly permitService: PermitOnChainService,
     protected readonly approvalService: MoverAPIApprovalService,
-    protected readonly proofService: ProveOnChainService
+    protected readonly proofService: ProveOnChainService,
+    protected readonly unwrapService: UnwrapAPIService
   ) {
     super('debit-card.on-chain.service', currentAddress, network, web3Client);
     this.usdcAssetData = getUSDCAssetData(network);
@@ -123,58 +102,6 @@ export class DebitCardOnChainService extends MoverOnChainService {
         }
       });
     }
-
-    Object.entries(yearnSimpleVaultAddresses).forEach(([n, vaults]) => {
-      vaults.forEach((vault) => {
-        this.specialTokenHandlers.push(
-          new WrappedTokenYearn(
-            vault.vaultToken.address,
-            this.currentAddress,
-            n as Network,
-            this.web3Client
-          )
-        );
-      });
-    });
-
-    Object.entries(idleTokenAddresses).forEach(([n, idleTokens]) => {
-      idleTokens.forEach((idleToken) => {
-        this.specialTokenHandlers.push(
-          new WrappedTokenIdle(
-            idleToken.wrapToken.address,
-            this.currentAddress,
-            n as Network,
-            this.web3Client
-          )
-        );
-      });
-    });
-
-    for (const [n, aTokens] of Object.entries(aTokenAddresses)) {
-      for (const aToken of aTokens) {
-        this.specialTokenHandlers.push(
-          new WrappedTokenAToken(
-            aToken.wrapToken.address,
-            this.currentAddress,
-            n as Network,
-            this.web3Client
-          )
-        );
-      }
-    }
-
-    this.specialTokenHandlers.push(
-      new WrappedTokenWXBTRFLY(this.currentAddress, Network.ethereum, this.web3Client)
-    );
-    this.specialTokenHandlers.push(
-      new WrappedTokenDCult(this.currentAddress, Network.ethereum, this.web3Client)
-    );
-    this.specialTokenHandlers.push(
-      new WrappedTokenGALCX(this.currentAddress, Network.ethereum, this.web3Client)
-    );
-    this.specialTokenHandlers.push(
-      new WrappedTokenGOHM(this.currentAddress, Network.ethereum, this.web3Client)
-    );
   }
 
   public async explainTopUpCompound(
@@ -184,42 +111,10 @@ export class DebitCardOnChainService extends MoverOnChainService {
     let index = 0;
     const steps = new Array<TransactionStateItem>();
 
-    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
-      h.canHandle(inputAsset.address, inputAsset.network)
+    const unwrapData = await this.unwrapService.CheckAndGetUnwrapToken(
+      inputAsset.network,
+      inputAsset.address
     );
-
-    if (specialTokenHandler !== undefined) {
-      steps.push({
-        index: index++,
-        type: InternalTransactionType.Confirm,
-        state: State.Queued,
-        estimation: 0,
-        token: inputAsset,
-        network: inputAsset.network,
-        timestamp: 0
-      });
-
-      steps.push({
-        index: index++,
-        type: InternalTransactionType.Unwrap,
-        state: State.Queued,
-        estimation: 15,
-        token: inputAsset,
-        network: inputAsset.network,
-        timestamp: 0
-      });
-
-      const unwrappedTokenData = specialTokenHandler.getUnwrappedToken();
-      const unwrappedTokenPermitData = await this.assetsService.getPermitData(
-        unwrappedTokenData.address,
-        inputAsset.network
-      );
-
-      inputAsset = {
-        ...unwrappedTokenData,
-        ...unwrappedTokenPermitData
-      };
-    }
 
     const isBase = isBaseAssetByNetwork(inputAsset.address, this.network);
 
@@ -297,13 +192,27 @@ export class DebitCardOnChainService extends MoverOnChainService {
       timestamp: 0
     });
 
+    let assetAfterUnwrap: SmallTokenInfo = inputAsset;
+    if (unwrapData.isUnwrapSupported) {
+      steps.push({
+        index: index++,
+        type: InternalTransactionType.Unwrap,
+        state: State.Queued,
+        estimation: 5,
+        token: inputAsset,
+        network: inputAsset.network,
+        timestamp: 0
+      });
+      assetAfterUnwrap = unwrapData.token;
+    }
+
     if (isSwapNeeded) {
       steps.push({
         index: index++,
         type: InternalTransactionType.Swap,
         state: State.Queued,
         estimation: 15,
-        token: inputAsset,
+        token: assetAfterUnwrap,
         network: inputAsset.network,
         timestamp: 0
       });
@@ -351,109 +260,6 @@ export class DebitCardOnChainService extends MoverOnChainService {
     };
   }
 
-  public getUnwrappedToken(inputAsset: SmallToken): SmallToken {
-    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
-      h.canHandle(inputAsset.address, this.network)
-    );
-
-    if (specialTokenHandler !== undefined) {
-      return specialTokenHandler.getUnwrappedToken();
-    }
-
-    return inputAsset;
-  }
-
-  /**
-   * return price of the unwrapped token (return input price in case of simple token)
-   * throws exception in case of price is unavailable
-   * @param inputAsset
-   * @param inputAssetPrice
-   */
-  public async getUnwrappedTokenPrice(inputAsset: Token, inputAssetPrice: string): Promise<string> {
-    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
-      h.canHandle(inputAsset.address, inputAsset.network)
-    );
-
-    if (specialTokenHandler !== undefined) {
-      return await this.getPriceByAddress(
-        specialTokenHandler.getUnwrappedToken().address,
-        inputAsset.network
-      );
-    }
-
-    return inputAssetPrice;
-  }
-
-  public async getUnwrappedData(
-    inputAsset: Token,
-    inputAmount: string,
-    inputAssetPrice: string
-  ): Promise<UnwrappedData> {
-    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
-      h.canHandle(inputAsset.address, inputAsset.network)
-    );
-
-    if (specialTokenHandler === undefined) {
-      return {
-        unwrappedToken: inputAsset,
-        amountInWei: toWei(inputAmount, inputAsset.decimals),
-        unwrappedTokenPrice: inputAssetPrice
-      };
-    }
-
-    const newAmount = await specialTokenHandler.getUnwrappedAmount(inputAmount);
-    const unwrappedToken = specialTokenHandler.getUnwrappedToken();
-
-    let unwrappedTokenPrice = '0';
-    try {
-      unwrappedTokenPrice = await this.getPriceByAddress(
-        unwrappedToken.address,
-        inputAsset.network
-      );
-    } catch (e) {
-      addSentryBreadcrumb({
-        level: 'error',
-        category: `${this.sentryCategoryPrefix}.getUnwrappedData`,
-        message: 'can not get unwrapped token price, return zero',
-        data: {
-          error: e,
-          assetAddress: unwrappedToken.address
-        }
-      });
-    }
-
-    return {
-      unwrappedToken,
-      amountInWei: getInteger(toWei(newAmount, unwrappedToken.decimals)),
-      unwrappedTokenPrice
-    };
-  }
-
-  public async getWrappedDataByUnwrapped(
-    wrappedAsset: Token,
-    unwrappedAsset: SmallTokenInfo,
-    unwrappedAmount: string
-  ): Promise<WrappedData> {
-    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
-      h.canHandle(wrappedAsset.address, wrappedAsset.network)
-    );
-
-    if (specialTokenHandler === undefined) {
-      // unwrappedAsset should be equal to wrappedAsset
-      return {
-        wrappedToken: unwrappedAsset,
-        amountInWei: toWei(unwrappedAmount, unwrappedAsset.decimals)
-      };
-    }
-
-    const newAmount = await specialTokenHandler.getWrappedAmountByUnwrapped(unwrappedAmount);
-
-    return {
-      wrappedToken: wrappedAsset,
-      amountInWei: getInteger(toWei(newAmount, wrappedAsset.decimals))
-    };
-  }
-
   public async topUpCompound(
     inputAsset: SmallToken & PermitData,
     inputNetwork: Network,
@@ -465,57 +271,36 @@ export class DebitCardOnChainService extends MoverOnChainService {
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
     try {
-      const specialTokenHandler = this.specialTokenHandlers.find((h) =>
-        h.canHandle(inputAsset.address, inputNetwork)
-      );
-      if (specialTokenHandler !== undefined) {
-        eb.emit({
-          type: InternalTransactionType.Confirm,
-          state: State.Pending
-        });
-        const unwrapEstimation = await specialTokenHandler.estimateUnwrap(inputAsset, inputAmount);
+      let tokenAddressForSwap = inputAsset.address;
+      let tokenAmountInWeiForSwap = toWei(inputAmount, inputAsset.decimals);
+      const isUnwrapSupported = await this.isUnwrapSupported(inputAsset.address);
 
-        let inputAmountInWei = '0';
-        try {
-          inputAmountInWei = await specialTokenHandler.unwrap(
-            inputAsset,
-            inputAmount,
-            async () => {
-              //
-            },
-            unwrapEstimation.gasLimit,
-            eb
-          );
-        } catch (error) {
-          this.rethrowIfUserRejectedRequest(error, EECode.userRejectTransaction);
-          throw error;
-        }
-
-        const unwrappedTokenData = specialTokenHandler.getUnwrappedToken();
-        const unwrappedTokenPermitData = await this.assetsService.getPermitData(
-          unwrappedTokenData.address,
-          inputNetwork
+      if (isUnwrapSupported) {
+        const unwrapData = await this.estimateUnwrapData(
+          inputAsset.address,
+          toWei(inputAmount, inputAsset.decimals)
         );
 
-        inputAsset = {
-          ...unwrappedTokenData,
-          ...unwrappedTokenPermitData
-        };
-        inputAmount = fromWei(inputAmountInWei, inputAsset.decimals);
-
-        if (!sameAddress(inputAsset.address, this.usdcAssetData.address)) {
-          transferData = await this.swapService.getTransferData(
-            this.usdcAssetData.address,
-            inputAsset.address,
-            inputAmountInWei,
-            true,
-            getSlippage(inputAsset.address, this.network),
-            getNetworkAddress(this.network, 'TOP_UP_EXCHANGE_PROXY_ADDRESS')
-          );
-        } else {
-          transferData = undefined;
-        }
+        tokenAddressForSwap = unwrapData.UnwrappedTokenAddress;
+        tokenAmountInWeiForSwap = unwrapData.UnwrappedAmountInWei;
       }
+
+      if (
+        transferData === undefined &&
+        !sameAddress(tokenAddressForSwap, this.usdcAssetData.address)
+      ) {
+        addSentryBreadcrumb({
+          type: 'error',
+          category: `${this.sentryCategoryPrefix}.topUpCompound`,
+          message: 'missing transferData',
+          data: {
+            isUnwrapSupported,
+            inputAssetAddress: inputAsset.address
+          }
+        });
+        throw new OnChainServiceError('Failed to top up: missing transferData');
+      }
+
       eb.emit({ type: InternalTransactionType.Confirm, state: State.Pending });
       const bridgeType = getNetworkConstant(this.network, 'BRIDGE_TYPE');
       if (bridgeType === undefined) {
@@ -524,18 +309,34 @@ export class DebitCardOnChainService extends MoverOnChainService {
 
       let bridgeData = Buffer.from([]);
       if (bridgeType !== BridgeType.None) {
-        const amountForBridge = sameAddress(inputAsset.address, this.usdcAssetData.address)
-          ? toWei(inputAmount, inputAsset.decimals)
-          : this.getAmountForBrideFromMinimumReceive(transferData);
+        let amountForBridge = '0';
+        let usdcSent = '0';
+        if (!isUnwrapSupported) {
+          if (sameAddress(inputAsset.address, this.usdcAssetData.address)) {
+            amountForBridge = toWei(inputAmount, inputAsset.decimals);
+            usdcSent = toWei(inputAmount, this.usdcAssetData.decimals);
+          } else {
+            amountForBridge = this.getAmountForBrideFromMinimumReceive(transferData);
+            if (transferData === undefined) {
+              throw new MoverError('transfer data is undefined in case of USDC');
+            }
+            usdcSent = transferData.buyAmount;
+          }
+        } else {
+          if (sameAddress(tokenAddressForSwap, this.usdcAssetData.address)) {
+            amountForBridge = tokenAmountInWeiForSwap;
+            usdcSent = tokenAmountInWeiForSwap;
+          } else {
+            amountForBridge = this.getAmountForBrideFromMinimumReceive(transferData);
+            if (transferData === undefined) {
+              throw new MoverError('transfer data is undefined in case of USDC');
+            }
+            usdcSent = transferData.buyAmount;
+          }
+        }
+
         const bridgeDataResp = await this.getBridgeData(bridgeType, amountForBridge);
         bridgeData = bridgeDataResp.BridgeData;
-
-        let usdcSent: string;
-        if (transferData === undefined) {
-          usdcSent = toWei(inputAmount, this.usdcAssetData.decimals);
-        } else {
-          usdcSent = transferData.buyAmount;
-        }
 
         const newFeeInUsdc = fromWei(
           multiply(usdcSent, bridgeDataResp.BridgeFeeInPercents),
@@ -627,7 +428,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
           permitCallData,
           bridgeType,
           bridgeData,
-          receiverHash
+          receiverHash,
+          isUnwrapSupported,
+          tokenAddressForSwap
         );
 
         try {
@@ -639,6 +442,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
             bridgeType,
             bridgeData,
             receiverHash,
+            isUnwrapSupported,
+            tokenAddressForSwap,
             onTransactionHash,
             topUpWithPermitGasLimit,
             eb
@@ -666,6 +471,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
             bridgeType,
             bridgeData,
             receiverHash,
+            isUnwrapSupported,
+            tokenAddressForSwap,
             onTransactionHash,
             undefined,
             eb
@@ -689,6 +496,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
+    isUnwrapSupported: boolean,
+    tokenAddressForSwap: string,
     onTransactionHash: (hash: string) => void,
     attemptNumber = 1,
     eb: ITransactionStateEventBus
@@ -779,7 +588,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
         proofStr,
         bridgeType,
         bridgeData,
-        receiverHash
+        receiverHash,
+        isUnwrapSupported,
+        tokenAddressForSwap
       );
 
       eb.emit({ type: InternalTransactionType.Approve, state: State.Succeeded });
@@ -793,6 +604,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
         bridgeType,
         bridgeData,
         receiverHash,
+        isUnwrapSupported,
+        tokenAddressForSwap,
         onTransactionHash,
         gasLimit,
         eb
@@ -821,7 +634,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
         approvalData.data,
         bridgeType,
         bridgeData,
-        receiverHash
+        receiverHash,
+        isUnwrapSupported,
+        tokenAddressForSwap
       );
 
       addSentryBreadcrumb({
@@ -852,6 +667,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
         bridgeType,
         bridgeData,
         receiverHash,
+        isUnwrapSupported,
+        tokenAddressForSwap,
         onTransactionHash,
         gasLimit,
         eb
@@ -906,6 +723,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
         bridgeType,
         bridgeData,
         receiverHash,
+        isUnwrapSupported,
+        tokenAddressForSwap,
         onTransactionHash,
         attemptNumber + 1,
         eb
@@ -921,7 +740,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
     proof: string,
     bridgeType: BridgeType,
     bridgeData: Buffer,
-    receiverHash: Buffer
+    receiverHash: Buffer,
+    isUnwrapSupported: boolean,
+    tokenAddressForSwap: string
   ): Promise<string> {
     if (this.useMockEstimation) {
       return '3000000';
@@ -931,12 +752,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       throw new NetworkFeatureNotSupportedError('Card Top Up', this.network);
     }
 
-    if (
-      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
-      transferData === undefined
-    ) {
-      throw new OnChainServiceError('Failed to estimate top up for USDC: missing transferData');
-    }
+    this.checkTransferData(inputAsset, isUnwrapSupported, tokenAddressForSwap, transferData);
 
     try {
       let gasLimitObj;
@@ -1007,17 +823,12 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
+    isUnwrapSupported: boolean,
+    tokenAddressForSwap: string,
     onTransactionHash: (hash: string) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
-    if (
-      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
-      transferData === undefined
-    ) {
-      throw new OnChainServiceError('Failed to execute Top Up with proof: missing transferData');
-    }
-
     addSentryBreadcrumb({
       level: 'info',
       category: `${this.sentryCategoryPrefix}.topUpWithProof`,
@@ -1034,6 +845,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
         gasLimit
       }
     });
+
+    this.checkTransferData(inputAsset, isUnwrapSupported, tokenAddressForSwap, transferData);
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       if (this.topUpProxyContract === undefined) {
@@ -1127,7 +940,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
     backendData: string,
     bridgeType: BridgeType,
     bridgeData: Buffer,
-    receiverHash: Buffer
+    receiverHash: Buffer,
+    isUnwrapSupported: boolean,
+    tokenAddressForSwap: string
   ): Promise<string> {
     if (this.useMockEstimation) {
       return '3000000';
@@ -1136,12 +951,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       throw new NetworkFeatureNotSupportedError('Card Top Up', this.network);
     }
 
-    if (
-      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
-      transferData === undefined
-    ) {
-      throw new OnChainServiceError('Failed to estimate top up for USDC: missing transferData');
-    }
+    this.checkTransferData(inputAsset, isUnwrapSupported, tokenAddressForSwap, transferData);
 
     try {
       let gasLimitObj;
@@ -1211,17 +1021,12 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
+    isUnwrapSupported: boolean,
+    tokenAddressForSwap: string,
     onTransactionHash: (hash: string) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
-    if (
-      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
-      transferData === undefined
-    ) {
-      throw new OnChainServiceError('Failed to execute Top Up with trust: missing transferData');
-    }
-
     addSentryBreadcrumb({
       level: 'info',
       category: `${this.sentryCategoryPrefix}.topUpWithTrust`,
@@ -1238,6 +1043,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
         gasLimit
       }
     });
+
+    this.checkTransferData(inputAsset, isUnwrapSupported, tokenAddressForSwap, transferData);
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       if (this.topUpProxyContract === undefined) {
@@ -1327,7 +1134,9 @@ export class DebitCardOnChainService extends MoverOnChainService {
     permitCallData: string,
     bridgeType: BridgeType,
     bridgeData: Buffer,
-    receiverHash: Buffer
+    receiverHash: Buffer,
+    isUnwrapSupported: boolean,
+    tokenAddressForSwap: string
   ): Promise<string> {
     if (this.useMockEstimation) {
       return '3000000';
@@ -1337,12 +1146,7 @@ export class DebitCardOnChainService extends MoverOnChainService {
       throw new NetworkFeatureNotSupportedError('Card Top Up', this.network);
     }
 
-    if (
-      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
-      transferData === undefined
-    ) {
-      throw new OnChainServiceError('Failed to estimate top up for USDC: missing transferData');
-    }
+    this.checkTransferData(inputAsset, isUnwrapSupported, tokenAddressForSwap, transferData);
 
     try {
       let gasLimitObj;
@@ -1412,17 +1216,12 @@ export class DebitCardOnChainService extends MoverOnChainService {
     bridgeType: BridgeType,
     bridgeData: Buffer,
     receiverHash: Buffer,
+    isUnwrapSupported: boolean,
+    tokenAddressForSwap: string,
     onTransactionHash: (hash: string) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
-    if (
-      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
-      transferData === undefined
-    ) {
-      throw new OnChainServiceError('Failed to execute Top Up with permit: missing transferData');
-    }
-
     addSentryBreadcrumb({
       level: 'info',
       category: `${this.sentryCategoryPrefix}.TopUpWithPermit`,
@@ -1438,6 +1237,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
         gasLimit
       }
     });
+
+    this.checkTransferData(inputAsset, isUnwrapSupported, tokenAddressForSwap, transferData);
 
     return new Promise<TransactionReceipt>((resolve, reject) => {
       if (this.topUpProxyContract === undefined) {
@@ -1554,208 +1355,64 @@ export class DebitCardOnChainService extends MoverOnChainService {
     }
   }
 
-  protected async getPriceByAddress(tokenAddress: string, tokenNetwork: Network): Promise<string> {
-    const walletTokens = this.getWalletTokens();
-    const inWalletToken = walletTokens.find(
-      (t) => sameAddress(tokenAddress, t.address) && t.network === tokenNetwork
-    );
-    if (inWalletToken !== undefined && greaterThan(inWalletToken.priceUSD, '0')) {
-      return inWalletToken.priceUSD;
+  protected async isUnwrapSupported(tokenAddress: string): Promise<boolean> {
+    const transactionParams = {
+      from: this.currentAddress
+    } as TransactionsParams;
+
+    if (this.topUpProxyContract === undefined) {
+      throw new MoverError('topUpProxyContract is undefined in IsUnwrapSupported function');
     }
 
-    try {
-      return await this.getTokenPrice(tokenAddress, this.network);
-    } catch (err) {
-      addSentryBreadcrumb({
-        level: 'error',
-        category: `${this.sentryCategoryPrefix}.getPriceByAddress`,
-        message: 'Failed to get token price from token price',
-        data: {
-          tokenAddress
-        }
-      });
-      throw new MoverError('Can not get token price', {
-        tokenAddress
-      });
-    }
+    const isUnwrapSupported = await this.topUpProxyContract.methods
+      .unwrapSupported(tokenAddress)
+      .call(transactionParams);
+
+    return isUnwrapSupported;
   }
 
-  public async estimateTopUpCompoundLegacy(
-    inputAsset: SmallToken,
-    inputAmount: string,
-    transferData: TransferData | undefined
-  ): Promise<CompoundEstimateWithUnwrapResponse> {
-    if (this.centralTransferProxyContract === undefined) {
-      throw new NetworkFeatureNotSupportedError('Card Top Up', this.network);
+  protected async estimateUnwrapData(
+    tokenAddress: string,
+    amountInWei: string
+  ): Promise<UnwrapEstimationData> {
+    const transactionParams = {
+      from: this.currentAddress
+    } as TransactionsParams;
+
+    if (this.topUpProxyContract === undefined) {
+      throw new MoverError('topUpProxyContract is undefined in EstimateUnwrapData function');
     }
 
-    const specialTokenHandler = this.specialTokenHandlers.find((h) =>
-      h.canHandle(inputAsset.address, this.network)
-    );
+    const { 0: newTokenAddress, 1: newAmountInWei } = await this.topUpProxyContract.methods
+      .estimateUnwrap(tokenAddress, amountInWei)
+      .call(transactionParams);
 
-    if (specialTokenHandler !== undefined) {
-      addSentryBreadcrumb({
-        level: 'info',
-        category: `${this.sentryCategoryPrefix}.estimateTopUpCompoundLegacy`,
-        message: 'Special token',
-        data: {
-          inputAsset: inputAsset,
-          unwrapTo: specialTokenHandler.getUnwrappedToken().symbol
-        }
-      });
-
-      let estimation;
-      try {
-        estimation = await specialTokenHandler.estimateUnwrap(inputAsset, inputAmount);
-      } catch (error) {
-        addSentryBreadcrumb({
-          level: 'error',
-          category: `${this.sentryCategoryPrefix}.estimateTopUpCompoundLegacy`,
-          message: 'failed to estimate unwrap',
-          data: {
-            error
-          }
-        });
-
-        throw new OnChainServiceError('Failed to estimate top up').wrap(error);
-      }
-
-      return {
-        actionGasLimit: gasDefaults.basic_move_card_top_up,
-        approveGasLimit: gasDefaults.basic_approval,
-        unwrapGasLimit: estimation.gasLimit
-      };
-    }
-
-    if (
-      !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
-      transferData === undefined
-    ) {
-      throw new OnChainServiceError('Failed to estimate top up: missing transferData');
-    }
-
-    const approveGasLimit = await this.estimateApproveIfNeeded(
-      inputAsset,
-      inputAmount,
-      this.centralTransferProxyAddress
-    );
-
-    if (approveGasLimit !== undefined) {
-      return {
-        actionGasLimit: gasDefaults.basic_move_card_top_up,
-        approveGasLimit: approveGasLimit,
-        unwrapGasLimit: '0'
-      };
-    }
-
-    try {
-      const gasLimitObj = await this.centralTransferProxyContract.methods
-        .cardTopUp(
-          this.currentAddress,
-          this.substituteAssetAddressIfNeeded(inputAsset.address),
-          toWei(inputAmount, inputAsset.decimals),
-          this.mapTransferDataToExpectedMinimumAmount(transferData),
-          this.mapTransferDataToBytes(transferData)
-        )
-        .estimateGas({
-          from: this.currentAddress,
-          value: this.mapTransferDataToValue(transferData)
-        });
-
-      if (gasLimitObj) {
-        return {
-          approveGasLimit: '0',
-          unwrapGasLimit: '0',
-          actionGasLimit: this.addGasBuffer(gasLimitObj.toString())
-        };
-      }
-    } catch (error) {
-      addSentryBreadcrumb({
-        level: 'error',
-        category: `${this.sentryCategoryPrefix}.estimateTopUpCompoundLegacy`,
-        message: 'Failed to estimate top up',
-        data: {
-          error,
-          inputAsset,
-          inputAmount,
-          transferData
-        }
-      });
-
-      throw new OnChainServiceError('Failed to estimate top up').wrap(error);
-    }
-
-    addSentryBreadcrumb({
-      level: 'error',
-      category: `${this.sentryCategoryPrefix}.estimateTopUpCompoundLegacy`,
-      message: 'Failed to estimate top up: empty gas limit',
-      data: {
-        inputAsset,
-        inputAmount,
-        transferData
-      }
-    });
-
-    throw new OnChainServiceError('Failed to estimate top up: empty gas limit');
+    return {
+      UnwrappedTokenAddress: newTokenAddress,
+      UnwrappedAmountInWei: newAmountInWei
+    };
   }
 
-  protected async topUpLegacy(
+  protected checkTransferData(
     inputAsset: SmallTokenInfo,
-    inputAmount: string,
-    transferData: TransferData | undefined,
-    changeStepToProcess: () => Promise<void>,
-    gasLimit: string
-  ): Promise<TransactionReceipt> {
+    isUnwrapSupported: boolean,
+    tokenAddressForSwap: string,
+    transferData: TransferData | undefined
+  ): void {
     if (
+      !isUnwrapSupported &&
       !sameAddress(inputAsset.address, this.usdcAssetData.address) &&
       transferData === undefined
     ) {
-      throw new OnChainServiceError('Failed to execute Top Up: missing transferData');
+      throw new OnChainServiceError('missing transferData');
     }
 
-    return new Promise<TransactionReceipt>((resolve, reject) => {
-      if (this.centralTransferProxyContract === undefined) {
-        throw new NetworkFeatureNotSupportedError('Card Top Up', this.network);
-      }
-
-      this.wrapWithSendMethodCallbacks(
-        this.centralTransferProxyContract.methods
-          .cardTopUp(
-            this.currentAddress,
-            this.substituteAssetAddressIfNeeded(inputAsset.address),
-            toWei(inputAmount, inputAsset.decimals),
-            this.mapTransferDataToExpectedMinimumAmount(transferData),
-            this.mapTransferDataToBytes(transferData)
-          )
-          .send(
-            this.getDefaultTransactionsParams(gasLimit, this.mapTransferDataToValue(transferData))
-          ),
-        resolve,
-        reject,
-        async (hash) => {
-          await this.addMemPoolTxToLocalStorage({
-            internalType: TransactionType.CardTopUp,
-            token: inputAsset as Token,
-            network: this.network,
-            amount: inputAmount,
-            timestamp: dayjs().unix(),
-            direction: TransactionDirection.Out,
-            hash: hash,
-            toAddress: getNetworkAddress(this.network, 'TRANSFER_PROXY_ADDRESS')
-          });
-          changeStepToProcess();
-        }
-      );
-    });
-  }
-
-  protected async getTokenPrice(address: string, network: Network): Promise<string> {
-    const response = await this.assetsService.getTokenPrices([
-      { address: address, network: network }
-    ]);
-
-    return (
-      response.find((t) => sameAddress(t.address, address) && t.network === network)?.price ?? '0'
-    );
+    if (
+      isUnwrapSupported &&
+      !sameAddress(tokenAddressForSwap, this.usdcAssetData.address) &&
+      transferData === undefined
+    ) {
+      throw new OnChainServiceError('missing transferData (with unwrap)');
+    }
   }
 }
