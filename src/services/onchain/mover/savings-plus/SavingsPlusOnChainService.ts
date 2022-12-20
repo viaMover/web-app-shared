@@ -42,6 +42,7 @@ import { MoverOnChainService } from '../MoverOnChainService';
 import { PreparedAction } from '../subsidized/types';
 import { TransferProxyContract } from '../types';
 import { InvalidNetworkForOperationError } from './InvalidNetworkForOperationError';
+import { TxData } from "../../../api/mover/activity/types";
 
 export class SavingsPlusOnChainService extends MoverOnChainService {
   protected readonly centralTransferProxyContract: TransferProxyContract | undefined;
@@ -267,7 +268,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     inputAmount: string,
     transferData: TransferData | undefined,
     depositData: DepositTransactionData,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     actionGasLimit: string,
     approveGasLimit: string,
     eb: ITransactionStateEventBus
@@ -526,7 +527,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     outputAsset: SmallTokenInfo,
     outputAmount: string,
     withdrawToNetwork: Network,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     withdrawData: WithdrawTransactionData | undefined,
     gasLimit: string,
     eb: ITransactionStateEventBus
@@ -789,7 +790,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     inputAmount: string,
     transferData: TransferData | undefined,
     depositData: DepositOnlyTransactionData,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -839,7 +840,13 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
             state: State.Pending,
             hash: hash
           });
-          onTransactionHash(hash);
+          onTransactionHash(hash, {
+            amount: inputAmount,
+            hash: hash,
+            networkFrom: this.network,
+            networkTo: Network.polygon,
+            token: inputAsset
+          });
         }
       );
     });
@@ -851,7 +858,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     inputAmount: string,
     transferData: TransferData | undefined,
     depositData: DepositWithBridgeTransactionData,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -908,7 +915,13 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
               state: State.Pending,
               hash: hash
             });
-            onTransactionHash(hash);
+            onTransactionHash(hash,{
+              amount: inputAmount,
+              hash: hash,
+              networkFrom: this.network,
+              networkTo: Network.polygon,
+              token: inputAsset
+            });
           }
         );
 
@@ -994,7 +1007,13 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
               state: State.Pending,
               hash: hash
             });
-            onTransactionHash(hash);
+            onTransactionHash(hash, {
+              amount: inputAmount,
+              hash: hash,
+              networkFrom: this.network,
+              networkTo: Network.polygon,
+              token: inputAsset
+            });
           }
         );
         return;
@@ -1053,7 +1072,13 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
             state: State.Pending,
             hash: hash
           });
-          onTransactionHash(hash);
+          onTransactionHash(hash, {
+            amount: inputAmount,
+            hash: hash,
+            networkFrom: this.network,
+            networkTo: Network.polygon,
+            token: inputAsset
+          });
         }
       );
     });
@@ -1063,7 +1088,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     outputAsset: SmallTokenInfo,
     outputAmount: string,
     withdrawToNetwork: Network,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt | undefined> {
     try {
@@ -1100,7 +1125,13 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
           state: State.Pending,
           hash: subsidizedResponse.txID
         });
-        onTransactionHash(subsidizedResponse.txID);
+        onTransactionHash(subsidizedResponse.txID, {
+          amount: outputAmount,
+          hash: subsidizedResponse.txID,
+          networkFrom: Network.polygon,
+          networkTo: withdrawToNetwork,
+          token: outputAsset
+        });
       }
 
       if (subsidizedResponse.queueID !== undefined) {
@@ -1122,7 +1153,13 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
             state: State.Pending,
             hash: resp.txID
           });
-          onTransactionHash(resp.txID);
+          onTransactionHash(resp.txID, {
+            amount: outputAmount,
+            hash: resp.txID,
+            networkFrom: Network.polygon,
+            networkTo: withdrawToNetwork,
+            token: outputAsset
+          });
         };
 
         await pollingFn(subsidizedResponse.queueID);
@@ -1139,7 +1176,7 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
     outputAsset: SmallTokenInfo,
     outputAmount: string,
     withdrawData: WithdrawOnlyTransactionData,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt | never> {
@@ -1189,7 +1226,13 @@ export class SavingsPlusOnChainService extends MoverOnChainService {
             state: State.Pending,
             hash: hash
           });
-          onTransactionHash(hash);
+          onTransactionHash(hash, {
+            amount: outputAmount,
+            hash: hash,
+            networkFrom: Network.polygon,
+            networkTo: this.network,
+            token: outputAsset
+          });
         },
         {
           outputAsset,

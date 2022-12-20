@@ -25,6 +25,7 @@ import {
 import { CompoundEstimateResponse } from '../../types';
 import { MoverOnChainService } from '../MoverOnChainService';
 import { StakingContract } from './types';
+import { TxData } from "../../../api/mover/activity/types";
 
 export class StakingUbtOnChainService extends MoverOnChainService {
   protected readonly stakingContract: StakingContract | undefined;
@@ -44,7 +45,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
   public async depositCompound(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     actionGasLimit: string,
     approveGasLimit: string,
     eb: ITransactionStateEventBus
@@ -209,7 +210,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
   public async withdrawCompound(
     outputAsset: SmallTokenInfo,
     outputAmount: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     actionGasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -307,7 +308,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
   protected async deposit(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -354,7 +355,13 @@ export class StakingUbtOnChainService extends MoverOnChainService {
             state: State.Pending,
             hash: hash
           });
-          onTransactionHash(hash);
+          onTransactionHash(hash, {
+            amount: inputAmount,
+            hash: hash,
+            networkFrom: Network.ethereum,
+            networkTo: Network.ethereum,
+            token: inputAsset
+          });
         },
         {
           gasLimit
@@ -366,7 +373,7 @@ export class StakingUbtOnChainService extends MoverOnChainService {
   protected async withdraw(
     outputAsset: SmallTokenInfo,
     outputAmount: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     gasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -413,7 +420,13 @@ export class StakingUbtOnChainService extends MoverOnChainService {
             state: State.Pending,
             hash: hash
           });
-          onTransactionHash(hash);
+          onTransactionHash(hash, {
+            amount: outputAmount,
+            hash: hash,
+            networkFrom: Network.ethereum,
+            networkTo: Network.ethereum,
+            token: outputAsset
+          });
         },
         {
           gasLimit
