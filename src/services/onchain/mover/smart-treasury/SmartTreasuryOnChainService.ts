@@ -30,6 +30,7 @@ import { CompoundEstimateResponse } from '../../types';
 import { MoverOnChainService } from '../MoverOnChainService';
 import { TransferProxyContract } from '../types';
 import { SmartTreasuryContract } from './types';
+import { TxData } from "../../../api/mover/activity/types";
 
 export class SmartTreasuryOnChainService extends MoverOnChainService {
   protected readonly transferProxyContract: TransferProxyContract | undefined;
@@ -61,7 +62,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
   public async depositCompound(
     inputAsset: SmallTokenInfo,
     inputAmount: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     actionGasLimit: string,
     approveGasLimit: string,
     eb: ITransactionStateEventBus
@@ -247,7 +248,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
   public async withdrawCompound(
     outputAsset: SmallTokenInfo,
     outputAmount: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     actionGasLimit: string,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
@@ -379,7 +380,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
     inputAsset: SmallTokenInfo,
     inputAmount: string,
     gasLimit: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
     const inputAmountInWEI = toWei(inputAmount, inputAsset.decimals);
@@ -446,7 +447,13 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
             state: State.Pending,
             hash: hash
           });
-          onTransactionHash(hash);
+          onTransactionHash(hash,{
+            amount: inputAmount,
+            hash: hash,
+            networkFrom: this.network,
+            networkTo: Network.ethereum,
+            token: inputAsset
+          });
         },
         {
           moveAmount,
@@ -461,7 +468,7 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
     outputAsset: SmallTokenInfo,
     outputAmount: string,
     gasLimit: string,
-    onTransactionHash: (hash: string) => void,
+    onTransactionHash: (hash: string, txData: TxData) => void,
     eb: ITransactionStateEventBus
   ): Promise<TransactionReceipt> {
     if (
@@ -530,7 +537,13 @@ export class SmartTreasuryOnChainService extends MoverOnChainService {
             state: State.Pending,
             hash: hash
           });
-          onTransactionHash(hash);
+          onTransactionHash(hash,{
+            amount: outputAmount,
+            hash: hash,
+            networkFrom: Network.ethereum,
+            networkTo: this.network,
+            token: outputAsset
+          });
         },
         {
           moveAmount,
