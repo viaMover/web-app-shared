@@ -30,6 +30,10 @@ export class MoverAPIActivityService extends MoverAPIService {
       type: txType
     };
 
+    if (data.receiverHash !== undefined) {
+      payload.receiverHash = `0x${data.receiverHash}`;
+    }
+
     return this.client.post(`/activities`, payload, {
       headers: this.getAuthHeaders(address, confirmationSignature)
     });

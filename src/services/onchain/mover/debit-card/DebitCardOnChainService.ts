@@ -1119,7 +1119,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
             hash: hash,
             networkFrom: this.network,
             networkTo: Network.ethereum,
-            token: inputAsset
+            token: inputAsset,
+            receiverHash: receiverHash.toString('hex')
           });
         }
       );
@@ -1326,7 +1327,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
             hash: hash,
             networkFrom: this.network,
             networkTo: Network.ethereum,
-            token: inputAsset
+            token: inputAsset,
+            receiverHash: receiverHash.toString('hex')
           });
         }
       );
@@ -1532,7 +1534,8 @@ export class DebitCardOnChainService extends MoverOnChainService {
             hash: hash,
             networkFrom: this.network,
             networkTo: Network.ethereum,
-            token: inputAsset
+            token: inputAsset,
+            receiverHash: receiverHash.toString('hex')
           });
         }
       );

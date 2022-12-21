@@ -8,6 +8,7 @@ export type TxData = {
   amount: string;
   token: SmallTokenInfo;
   hash: string;
+  receiverHash?: string;
 };
 
 export type TxDataDto = {
@@ -17,4 +18,5 @@ export type TxDataDto = {
   token: Omit<SmallTokenInfo, 'network'>;
   hash: string;
   type: TransactionType;
+  receiverHash?: string;
 };
