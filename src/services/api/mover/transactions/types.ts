@@ -31,6 +31,7 @@ export type ApiTransactionsResponse = {
 
 export type ApiTransaction = {
   type: TransactionType;
+  direction: TransactionDirection;
   hash: string;
   to: string;
   amount: string;
