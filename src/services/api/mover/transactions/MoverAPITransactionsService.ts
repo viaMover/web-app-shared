@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { Md5 } from 'ts-md5';
+import hash from 'object-hash';
 
 import { getNetworkByChainId } from '../../../../references/references';
 import { ContentName, SameContentError } from '../../../SameContentError';
@@ -32,7 +32,7 @@ export class MoverAPITransactionsService extends MoverAPIService {
       )
     ).data.payload;
 
-    const newHash = Md5.hashStr(JSON.stringify(transactions));
+    const newHash = hash(transactions, { unorderedArrays: true });
     if (this.contentHash === newHash) {
       if (checkContentHash) {
         throw new SameContentError(ContentName.TxInfo);
