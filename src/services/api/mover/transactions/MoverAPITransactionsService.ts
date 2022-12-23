@@ -32,16 +32,7 @@ export class MoverAPITransactionsService extends MoverAPIService {
       )
     ).data.payload;
 
-    const newHash = hash(transactions, { unorderedArrays: true });
-    if (this.contentHash === newHash) {
-      if (checkContentHash) {
-        throw new SameContentError(ContentName.TxInfo);
-      }
-    } else {
-      this.contentHash = newHash;
-    }
-
-    return transactions.chains
+    const txs = transactions.chains
       .flatMap((group) => {
         const networkInfo = getNetworkByChainId(group.chainID);
         if (networkInfo === undefined) {
@@ -52,6 +43,23 @@ export class MoverAPITransactionsService extends MoverAPIService {
       .filter(
         (tx) =>
           tx.type !== TransactionType.SavingsDeposit && tx.type !== TransactionType.SavingsWithdraw
-      );
+      )
+      .sort((a, b) => {
+        return a < b ? -1 : a === b ? 0 : 1;
+      })
+      .sort((a, b) => {
+        return b.timestamp - a.timestamp;
+      });
+
+    const newHash = hash(txs);
+    if (this.contentHash === newHash) {
+      if (checkContentHash) {
+        throw new SameContentError(ContentName.TxInfo);
+      }
+    } else {
+      this.contentHash = newHash;
+    }
+
+    return txs;
   }
 }
