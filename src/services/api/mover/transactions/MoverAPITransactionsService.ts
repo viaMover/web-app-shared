@@ -45,10 +45,7 @@ export class MoverAPITransactionsService extends MoverAPIService {
           tx.type !== TransactionType.SavingsDeposit && tx.type !== TransactionType.SavingsWithdraw
       )
       .sort((a, b) => {
-        return a < b ? -1 : a === b ? 0 : 1;
-      })
-      .sort((a, b) => {
-        return b.timestamp - a.timestamp;
+        return a.hash < b.hash ? -1 : a.hash === b.hash ? 0 : 1;
       });
 
     const newHash = hash(txs);
