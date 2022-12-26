@@ -35,6 +35,12 @@ export const isRejectedRequestError = (error: unknown): boolean => {
     if (error.message === WalletConnectErrorSignature.FailedOrRejectedRequest) {
       return true;
     }
+    if (error.message === WalletConnectErrorSignature.RejectedByTheUser) {
+      return true;
+    }
+    if (error.message === WalletConnectErrorSignature.RejectedByUser) {
+      return true;
+    }
 
     if (error.message === MetamaskErrorSignature.UserDeniedMessageSignature) {
       return true;
@@ -69,7 +75,9 @@ export enum ProviderRpcErrorCode {
 }
 
 export enum WalletConnectErrorSignature {
-  FailedOrRejectedRequest = 'Failed or Rejected Request'
+  FailedOrRejectedRequest = 'Failed or Rejected Request',
+  RejectedByTheUser = 'Reject by the user',
+  RejectedByUser = 'Rejected by User'
 }
 
 export enum TrustWalletErrorSignature {
